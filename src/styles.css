@@ -343,6 +343,10 @@ button {
   background: var(--color-superficie-alta);
 }
 
+.registro__dato--ancho {
+  grid-column: 1 / -1;
+}
+
 .registro__dato dt {
   color: var(--color-texto-suave);
   font-size: 0.8rem;
@@ -352,6 +356,94 @@ button {
   margin: 2px 0 0;
   font-size: 1.2rem;
   font-weight: 600;
+}
+
+.ubicacion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.ubicacion__leyenda,
+.pago__leyenda {
+  padding: 0;
+  font-weight: 600;
+}
+
+.ubicacion__resultado {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--color-superficie-alta);
+  border-radius: 12px;
+  background: var(--color-superficie);
+}
+
+.ubicacion__ok {
+  margin: 0;
+  color: #86efac;
+  font-weight: 600;
+}
+
+.ubicacion__coordenadas {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+.enlace {
+  color: var(--color-acento);
+  font-weight: 600;
+}
+
+.enlace:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+.pago {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.pago__opciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.pago__opcion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--toque-minimo);
+  padding: 10px 14px;
+  border: 1px solid var(--color-superficie-alta);
+  border-radius: 12px;
+  background: var(--color-superficie);
+  cursor: pointer;
+}
+
+.pago__opcion:has(input:checked) {
+  border-color: var(--color-acento);
+  background: rgba(56, 189, 248, 0.15);
+}
+
+.pago__opcion input {
+  accent-color: var(--color-acento);
+}
+
+.boton {
+  text-decoration: none;
 }
 
 @media (min-width: 480px) {

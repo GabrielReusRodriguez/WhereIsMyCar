@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import type { Aparcamiento } from "../types/aparcamiento";
 import { formatearFecha } from "../utils/fecha";
+import { urlGoogleMaps } from "../utils/googleMaps";
 import type { Idioma } from "../i18n";
 
 type Props = {
@@ -49,6 +50,37 @@ export function RegistroActivo({ aparcamiento, onRecoger }: Props) {
             <dd>{aparcamiento.plaza}</dd>
           </div>
         </dl>
+      )}
+
+      {aparcamiento.tipo === "calle" && (
+        <>
+          <dl className="registro__datos">
+            <div className="registro__dato registro__dato--ancho">
+              <dt>{t("guardado.direccion")}</dt>
+              <dd>
+                {aparcamiento.calle} {aparcamiento.numero},{" "}
+                {aparcamiento.ciudad}
+              </dd>
+            </div>
+            <div className="registro__dato">
+              <dt>{t("guardado.pago")}</dt>
+              <dd>
+                {aparcamiento.dePago
+                  ? t("guardado.pagoSi")
+                  : t("guardado.pagoNo")}
+              </dd>
+            </div>
+          </dl>
+
+          <a
+            className="boton boton--secundario"
+            href={urlGoogleMaps(aparcamiento.lat, aparcamiento.lng)}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t("guardado.verEnMaps")}
+          </a>
+        </>
       )}
 
       <button type="button" className="boton boton--peligro" onClick={recoger}>

@@ -23,6 +23,21 @@
     "plaza": "Plaza",
     "plazaAyuda": "Número o referencia de la plaza"
   },
+  "calle": {
+    "titulo": "Aparcamiento en la calle",
+    "calle": "Calle",
+    "calleAyuda": "Nombre de la calle",
+    "numero": "Número",
+    "ciudad": "Ciudad",
+    "ubicacion": "Ubicación GPS",
+    "usarUbicacion": "Usar mi ubicación",
+    "obteniendoUbicacion": "Obteniendo ubicación…",
+    "ubicacionObtenida": "Ubicación obtenida",
+    "verEnMaps": "Ver en Google Maps",
+    "pago": "¿Es de pago?",
+    "pagoSi": "Sí",
+    "pagoNo": "No"
+  },
   "comun": {
     "guardar": "Guardar aparcamiento",
     "cancelar": "Cancelar",
@@ -30,13 +45,23 @@
     "obligatorio": "Campo obligatorio"
   },
   "errores": {
-    "camposObligatorios": "Rellena los campos obligatorios."
+    "camposObligatorios": "Rellena los campos obligatorios.",
+    "ubicacionObligatoria": "Obtén tu ubicación GPS antes de guardar.",
+    "ubicacionPermiso": "No se pudo acceder a la ubicación. Revisa los permisos del navegador.",
+    "ubicacionNoDisponible": "La ubicación no está disponible en este momento.",
+    "ubicacionTimeout": "Se agotó el tiempo para obtener la ubicación.",
+    "ubicacionNoSoportado": "Este dispositivo no soporta geolocalización."
   },
   "guardado": {
     "titulo": "Aparcamiento guardado",
     "tipoParking": "Parking",
     "tipoCalle": "Calle",
     "hora": "Aparcado el {{fecha}}",
+    "direccion": "Dirección",
+    "pago": "Pago",
+    "pagoSi": "Sí",
+    "pagoNo": "No",
+    "verEnMaps": "Abrir en Google Maps",
     "recoger": "He recogido el coche",
     "confirmarRecoger": "¿Seguro que quieres eliminar el aparcamiento?"
   }

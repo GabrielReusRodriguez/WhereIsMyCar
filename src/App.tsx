@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useAparcamiento } from "./hooks/useAparcamiento";
 import { SelectorTipo } from "./components/SelectorTipo";
 import { FormularioParking } from "./components/FormularioParking";
+import { FormularioCalle } from "./components/FormularioCalle";
 import { RegistroActivo } from "./components/RegistroActivo";
 import { cambiarIdioma, type Idioma } from "./i18n";
 import type { TipoAparcamiento } from "./types/aparcamiento";
@@ -14,6 +15,8 @@ export default function App() {
   const { aparcamiento, guardar, recoger } = useAparcamiento();
   const [tipoSeleccionado, setTipoSeleccionado] =
     useState<TipoAparcamiento | null>(null);
+
+  const cerrarFormulario = () => setTipoSeleccionado(null);
 
   return (
     <main className="app">
@@ -45,12 +48,20 @@ export default function App() {
         <FormularioParking
           onGuardar={(datos) => {
             guardar(datos);
-            setTipoSeleccionado(null);
+            cerrarFormulario();
           }}
-          onCancelar={() => setTipoSeleccionado(null)}
+          onCancelar={cerrarFormulario}
+        />
+      ) : tipoSeleccionado === "calle" ? (
+        <FormularioCalle
+          onGuardar={(datos) => {
+            guardar(datos);
+            cerrarFormulario();
+          }}
+          onCancelar={cerrarFormulario}
         />
       ) : (
-        <SelectorTipo onSeleccionar={setTipoSeleccionado} calleDisponible={false} />
+        <SelectorTipo onSeleccionar={setTipoSeleccionado} calleDisponible />
       )}
     </main>
   );

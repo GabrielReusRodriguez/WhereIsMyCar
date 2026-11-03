@@ -23,6 +23,21 @@
     "plaza": "Plaça",
     "plazaAyuda": "Número o referència de la plaça"
   },
+  "calle": {
+    "titulo": "Aparcament al carrer",
+    "calle": "Carrer",
+    "calleAyuda": "Nom del carrer",
+    "numero": "Número",
+    "ciudad": "Ciutat",
+    "ubicacion": "Ubicació GPS",
+    "usarUbicacion": "Utilitza la meva ubicació",
+    "obteniendoUbicacion": "Obtenint ubicació…",
+    "ubicacionObtenida": "Ubicació obtinguda",
+    "verEnMaps": "Veure a Google Maps",
+    "pago": "És de pagament?",
+    "pagoSi": "Sí",
+    "pagoNo": "No"
+  },
   "comun": {
     "guardar": "Guarda l'aparcament",
     "cancelar": "Cancel·la",
@@ -30,13 +45,23 @@
     "obligatorio": "Camp obligatori"
   },
   "errores": {
-    "camposObligatorios": "Omple els camps obligatoris."
+    "camposObligatorios": "Omple els camps obligatoris.",
+    "ubicacionObligatoria": "Obtén la teva ubicació GPS abans de desar.",
+    "ubicacionPermiso": "No s'ha pogut accedir a la ubicació. Revisa els permisos del navegador.",
+    "ubicacionNoDisponible": "La ubicació no està disponible en aquest moment.",
+    "ubicacionTimeout": "S'ha esgotat el temps per obtenir la ubicació.",
+    "ubicacionNoSoportado": "Aquest dispositiu no admet geolocalització."
   },
   "guardado": {
     "titulo": "Aparcament desat",
     "tipoParking": "Pàrquing",
     "tipoCalle": "Carrer",
     "hora": "Aparcat el {{fecha}}",
+    "direccion": "Adreça",
+    "pago": "Pagament",
+    "pagoSi": "Sí",
+    "pagoNo": "No",
+    "verEnMaps": "Obre a Google Maps",
     "recoger": "He recollit el cotxe",
     "confirmarRecoger": "Segur que vols eliminar l'aparcament?"
   }
