@@ -1,10 +1,19 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useAparcamiento } from "./hooks/useAparcamiento";
+import { SelectorTipo } from "./components/SelectorTipo";
+import { FormularioParking } from "./components/FormularioParking";
+import { RegistroActivo } from "./components/RegistroActivo";
 import { cambiarIdioma, type Idioma } from "./i18n";
+import type { TipoAparcamiento } from "./types/aparcamiento";
 
 const IDIOMAS: readonly Idioma[] = ["es", "ca"];
 
 export default function App() {
   const { t, i18n } = useTranslation();
+  const { aparcamiento, guardar, recoger } = useAparcamiento();
+  const [tipoSeleccionado, setTipoSeleccionado] =
+    useState<TipoAparcamiento | null>(null);
 
   return (
     <main className="app">
@@ -30,13 +39,19 @@ export default function App() {
         </div>
       </header>
 
-      <section className="tarjeta" aria-labelledby="inicio-subtitulo">
-        <h2 id="inicio-subtitulo" className="tarjeta__titulo">
-          {t("app.subtitulo")}
-        </h2>
-        <p className="tarjeta__texto">{t("inicio.descripcion")}</p>
-        <p className="tarjeta__aviso">{t("inicio.proximamente")}</p>
-      </section>
+      {aparcamiento !== null ? (
+        <RegistroActivo aparcamiento={aparcamiento} onRecoger={recoger} />
+      ) : tipoSeleccionado === "parking" ? (
+        <FormularioParking
+          onGuardar={(datos) => {
+            guardar(datos);
+            setTipoSeleccionado(null);
+          }}
+          onCancelar={() => setTipoSeleccionado(null)}
+        />
+      ) : (
+        <SelectorTipo onSeleccionar={setTipoSeleccionado} calleDisponible={false} />
+      )}
     </main>
   );
 }

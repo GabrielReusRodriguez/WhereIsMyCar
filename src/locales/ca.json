@@ -1,7 +1,6 @@
 {
   "app": {
-    "titulo": "Where Is My Car",
-    "subtitulo": "On has aparcat?"
+    "titulo": "Where Is My Car"
   },
   "idioma": {
     "etiqueta": "Idioma",
@@ -9,7 +8,36 @@
     "ca": "Català"
   },
   "inicio": {
-    "descripcion": "Registra el teu aparcament en segons. Les dades es guarden només en aquest dispositiu.",
-    "proximamente": "L'aplicació està en construcció: el registre d'aparcaments arribarà en la propera versió."
+    "subtitulo": "On has aparcat?",
+    "descripcion": "Tria el tipus d'aparcament. Les dades es guarden només en aquest dispositiu.",
+    "tipoParking": "Pàrquing",
+    "tipoCalle": "Al carrer",
+    "calleProximamente": "Properament"
+  },
+  "parking": {
+    "titulo": "Aparcament en pàrquing",
+    "planta": "Planta",
+    "plantaAyuda": "Per exemple: -2, soterrani 1, planta 3",
+    "zona": "Zona (opcional)",
+    "zonaAyuda": "Per exemple: zona A, sector nord",
+    "plaza": "Plaça",
+    "plazaAyuda": "Número o referència de la plaça"
+  },
+  "comun": {
+    "guardar": "Guarda l'aparcament",
+    "cancelar": "Cancel·la",
+    "volver": "Torna",
+    "obligatorio": "Camp obligatori"
+  },
+  "errores": {
+    "camposObligatorios": "Omple els camps obligatoris."
+  },
+  "guardado": {
+    "titulo": "Aparcament desat",
+    "tipoParking": "Pàrquing",
+    "tipoCalle": "Carrer",
+    "hora": "Aparcat el {{fecha}}",
+    "recoger": "He recollit el cotxe",
+    "confirmarRecoger": "Segur que vols eliminar l'aparcament?"
   }
 }

@@ -1,7 +1,6 @@
 {
   "app": {
-    "titulo": "Where Is My Car",
-    "subtitulo": "¿Dónde has aparcado?"
+    "titulo": "Where Is My Car"
   },
   "idioma": {
     "etiqueta": "Idioma",
@@ -9,7 +8,36 @@
     "ca": "Català"
   },
   "inicio": {
-    "descripcion": "Registra tu aparcamiento en segundos. Los datos se guardan solo en este dispositivo.",
-    "proximamente": "La app está en construcción: el registro de aparcamientos llegará en la siguiente versión."
+    "subtitulo": "¿Dónde has aparcado?",
+    "descripcion": "Elige el tipo de aparcamiento. Los datos se guardan solo en este dispositivo.",
+    "tipoParking": "Parking",
+    "tipoCalle": "En la calle",
+    "calleProximamente": "Próximamente"
+  },
+  "parking": {
+    "titulo": "Aparcamiento en parking",
+    "planta": "Planta",
+    "plantaAyuda": "Por ejemplo: -2, sótano 1, planta 3",
+    "zona": "Zona (opcional)",
+    "zonaAyuda": "Por ejemplo: zona A, sector norte",
+    "plaza": "Plaza",
+    "plazaAyuda": "Número o referencia de la plaza"
+  },
+  "comun": {
+    "guardar": "Guardar aparcamiento",
+    "cancelar": "Cancelar",
+    "volver": "Volver",
+    "obligatorio": "Campo obligatorio"
+  },
+  "errores": {
+    "camposObligatorios": "Rellena los campos obligatorios."
+  },
+  "guardado": {
+    "titulo": "Aparcamiento guardado",
+    "tipoParking": "Parking",
+    "tipoCalle": "Calle",
+    "hora": "Aparcado el {{fecha}}",
+    "recoger": "He recogido el coche",
+    "confirmarRecoger": "¿Seguro que quieres eliminar el aparcamiento?"
   }
 }
