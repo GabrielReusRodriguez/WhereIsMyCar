@@ -73,6 +73,9 @@ test.describe("aparcamiento en la calle", () => {
 
   test("guarda dirección, GPS, pago y enlace a Google Maps", async ({ page }) => {
     await page.getByRole("button", { name: "En la calle" }).click();
+    await page
+      .getByRole("radio", { name: "Ubicación GPS y dirección" })
+      .check();
     await page.getByRole("textbox", { name: "Calle" }).fill("Gran Via");
     await page.getByRole("textbox", { name: "Número" }).fill("10");
     await page.getByRole("textbox", { name: "Ciudad" }).fill("Barcelona");
@@ -122,6 +125,9 @@ test.describe("aparcamiento en la calle", () => {
 
   test("guarda sin ciudad porque es opcional", async ({ page }) => {
     await page.getByRole("button", { name: "En la calle" }).click();
+    await page
+      .getByRole("radio", { name: "Ubicación GPS y dirección" })
+      .check();
     await page.getByRole("textbox", { name: "Calle" }).fill("Gran Via");
     await page.getByRole("textbox", { name: "Número" }).fill("10");
     await page.getByRole("button", { name: "Usar mi ubicación" }).click();
@@ -137,6 +143,9 @@ test.describe("aparcamiento en la calle", () => {
     page,
   }) => {
     await page.getByRole("button", { name: "En la calle" }).click();
+    await page
+      .getByRole("radio", { name: "Ubicación GPS y dirección" })
+      .check();
     await page.getByRole("textbox", { name: "Calle" }).fill("Gran Via");
     await page.getByRole("textbox", { name: "Número" }).fill("10");
     await page.getByRole("textbox", { name: "Ciudad" }).fill("Barcelona");

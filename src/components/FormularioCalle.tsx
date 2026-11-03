@@ -34,7 +34,7 @@ const CLAVES_ERROR: Record<CodigoErrorUbicacion, string> = {
 
 export function FormularioCalle({ onGuardar, onCancelar }: Props) {
   const { t } = useTranslation();
-  const [modo, setModo] = useState<ModoCalle>("completo");
+  const [modo, setModo] = useState<ModoCalle>("direccion");
   const [calle, setCalle] = useState("");
   const [numero, setNumero] = useState("");
   const [ciudad, setCiudad] = useState("");
