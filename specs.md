@@ -4,7 +4,7 @@ Especificación funcional y técnica de la web app **WhereIsMyCar**: registrar d
 
 ## 1. Visión
 
-El usuario aparca el coche, abre la app, registra la ubicación (parking o calle), opcionalmente hace una foto del coche y guarda. Mientras el coche sigue aparcado, la app muestra el registro activo con un enlace a Google Maps si es calle. Al recoger el coche, pulsa "He recogido el coche" y el registro y la foto se eliminan.
+El usuario aparca el coche, abre la app, registra la ubicación (parking o calle), opcionalmente hace una foto del coche y guarda. Mientras el coche sigue aparcado, la app muestra el registro activo con un enlace a Google Maps si es calle. Al recoger el coche, pulsa "He recogido el coche" y se registra un evento de recogida; el registro y la foto se conservan.
 
 ## 2. Requisitos funcionales
 
@@ -17,10 +17,18 @@ El usuario aparca el coche, abre la app, registra la ubicación (parking o calle
 
 ### RF-02 — Registrar aparcamiento en la calle
 
-- Campos obligatorios: **calle** y **número**. Campo opcional: **ciudad**.
-- **Coordenadas GPS**: botón que solicita `navigator.geolocation` y guarda `lat`/`lng`. Debe mostrar estado de carga y errores (permiso denegado, no disponible, timeout).
-- **Enlace a Google Maps**: visible en el registro activo, abre `https://www.google.com/maps?q=<lat>,<lng>` en pestaña nueva.
-- **Aparcamiento de pago**: selector sí/no (obligatorio, por defecto "no").
+Un aparcamiento en la calle se puede registrar en **tres modos** de entrada, elegidos con un selector previo:
+
+| Modo | Datos requeridos | Datos ocultos |
+|---|---|---|
+| `gps` — solo ubicación | coordenadas GPS + pago | calle, número, ciudad |
+| `direccion` — solo dirección | calle + número (+ ciudad opcional) + pago | GPS, enlace a Maps |
+| `completo` | GPS + calle + número (+ ciudad opcional) + pago | — |
+
+- **Calle** y **número** son obligatorios cuando el modo incluye dirección; **ciudad** es opcional.
+- **Coordenadas GPS**: botón que solicita `navigator.geolocation` y guarda `lat`/`lng`. Debe mostrar estado de carga y errores (permiso denegado, no disponible, timeout). Obligatorias en los modos `gps` y `completo`.
+- **Enlace a Google Maps**: visible en el registro activo solo si hay GPS, abre `https://www.google.com/maps?q=<lat>,<lng>` en pestaña nueva.
+- **Aparcamiento de pago**: selector sí/no (obligatorio en los tres modos, por defecto "no").
 - La **hora de aparcamiento** es la del momento de guardar el registro (automática, no editable).
 
 ### RF-03 — Foto del coche
@@ -28,7 +36,7 @@ El usuario aparca el coche, abre la app, registra la ubicación (parking o calle
 - Disponible en ambos tipos (parking y calle), **opcional**.
 - Captura mediante `<input type="file" accept="image/*" capture="environment">` para abrir la cámara del teléfono.
 - Preview antes de guardar; posibilidad de reemplazar o eliminar la foto.
-- Se guarda como `Blob` en IndexedDB (no en `localStorage`), asociada al registro activo.
+- Se guarda como `Blob` en IndexedDB (no en `localStorage`), con `id` = `fotoId` del registro.
 
 ### RF-04 — Vista del aparcamiento activo
 
@@ -38,12 +46,16 @@ El usuario aparca el coche, abre la app, registra la ubicación (parking o calle
 ### RF-05 — Recoger el coche
 
 - Botón "He recogido el coche" en la vista del registro activo.
-- Pide confirmación antes de borrar.
-- Al confirmar: elimina el registro de `localStorage` y el Blob de IndexedDB, y vuelve a la pantalla de entrada.
+- Pide confirmación antes de continuar.
+- Al confirmar: se añade un **evento inmutable** `recogido` asociado al aparcamiento y se vuelve a la pantalla de entrada.
+- El aparcamiento y su foto **no se borran**: quedan conservados en el dispositivo.
 
-### RF-06 — Un único aparcamiento
+### RF-06 — Registros inmutables y un único activo
 
-- No existe historial ni listado. Guardar un registro sustituye al anterior (la UI solo permite guardar cuando no hay registro activo).
+- Cada guardado crea un **registro nuevo con `id` único** (`crypto.randomUUID()`); nunca se modifica ni se borra un registro existente.
+- No hay historial visible en la UI, pero los registros se conservan y pueden consultarse.
+- El **aparcamiento activo se deriva**: es el registro más reciente (por `guardadoEn`) que no tenga un evento `recogido` asociado.
+- La UI solo permite guardar cuando no hay registro activo.
 - No hay backend ni sincronización.
 
 ### RF-07 — Idiomas castellano y catalán
@@ -64,16 +76,16 @@ El usuario aparca el coche, abre la app, registra la ubicación (parking o calle
 
 ## 3. Modelo de datos
 
-Un único registro bajo la clave `whereismycar.aparcamiento` en `localStorage`:
+Los registros viven en **IndexedDB** (base `whereismycar`, versión 2) y son **inmutables**: solo se añaden, nunca se actualizan ni se borran.
 
 ```ts
-type TipoAparcamiento = "parking" | "calle";
+type UbicacionGps = { lat: number; lng: number };
+type Direccion = { calle: string; numero: string; ciudad?: string };
 
 type AparcamientoBase = {
-  id: "activo";
-  tipo: TipoAparcamiento;
+  id: string;                  // crypto.randomUUID(), único e inmutable
   guardadoEn: number;          // epoch ms, hora de aparcamiento
-  fotoId?: string;             // clave del Blob en IndexedDB
+  fotoId?: string;             // clave del Blob en IndexedDB (= id del registro)
 };
 
 type AparcamientoParking = AparcamientoBase & {
@@ -85,18 +97,38 @@ type AparcamientoParking = AparcamientoBase & {
 
 type AparcamientoCalle = AparcamientoBase & {
   tipo: "calle";
-  calle: string;
-  numero: string;
-  ciudad?: string;
-  lat: number;
-  lng: number;
-  dePago: boolean;
-};
+  dePago: boolean;             // obligatorio en los tres modos
+} & (
+  | { modo: "gps";       gps: UbicacionGps }
+  | { modo: "direccion"; direccion: Direccion }
+  | { modo: "completo";  gps: UbicacionGps; direccion: Direccion }
+);
 
 type Aparcamiento = AparcamientoParking | AparcamientoCalle;
+
+type EventoAparcamiento = {
+  id: string;
+  tipo: "recogido";
+  aparcamientoId: string;
+  ocurridoEn: number;
+};
 ```
 
-Foto: IndexedDB, base `whereismycar`, store `fotos`, clave `id` del registro (`"activo"`), valor `{ id: string; blob: Blob; tipoMime: string }`.
+La unión discriminada por `modo` garantiza en tiempo de compilación que un aparcamiento en la calle siempre tiene GPS, dirección o ambos.
+
+### Almacenes de IndexedDB
+
+| Store | Clave | Índices | Contenido |
+|---|---|---|---|
+| `aparcamientos` | `id` | `porGuardadoEn` (`guardadoEn`) | Registros inmutables |
+| `eventos` | `id` | `porAparcamiento` (`aparcamientoId`) | Eventos inmutables (`recogido`) |
+| `fotos` | `id` | — | `{ id, blob, tipoMime }`, con `id` = `fotoId` del registro |
+
+**Registro activo** = registro con mayor `guardadoEn` que no tenga un evento `recogido` con su `aparcamientoId` (`calcularActivo`).
+
+### Migración desde el esquema anterior (v1)
+
+Al arrancar, `migrarDesdeLocalStorage()` lee la clave antigua `whereismycar.aparcamiento` de `localStorage` (registro mutable con `id: "activo"` y `lat`/`lng` planos), la importa como primer registro inmutable (calle → modo `completo`), mueve el Blob de la clave `"activo"` al nuevo `id` y elimina la clave antigua. Es idempotente y tolera datos corruptos.
 
 La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`. El parámetro de URL `lang` (`es` o `ca`) tiene prioridad sobre ese valor y, si es válido, se persiste al cargar.
 
@@ -113,18 +145,18 @@ La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
 ### Guardar en la calle
 
 1. Pantalla de entrada → "Calle".
-2. Rellenar calle, número y ciudad (opcional).
-3. Pulsar "Usar mi ubicación" → se obtienen coordenadas (obligatorias para guardar).
+2. Elegir el modo: solo GPS, solo dirección o ambos.
+3. Según el modo: pulsar "Usar mi ubicación" (GPS) y/o rellenar calle, número y ciudad (opcional).
 4. Indicar si es de pago.
 5. Adjuntar foto (opcional).
-6. Guardar → se persiste con `guardadoEn = Date.now()`.
-7. Vista activa con enlace "Abrir en Google Maps".
+6. Guardar → se persiste un registro nuevo con `id` único y `guardadoEn = Date.now()`.
+7. Vista activa con dirección y/o coordenadas y, si hay GPS, enlace "Abrir en Google Maps".
 
 ### Recoger el coche
 
 1. Vista activa → "He recogido el coche".
 2. Confirmación.
-3. Borrado de `localStorage` + Blob de IndexedDB.
+3. Se añade un evento `recogido`; el registro y su foto se conservan.
 4. Vuelta a la pantalla de entrada.
 
 ## 5. Requisitos no funcionales
@@ -183,9 +215,9 @@ La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
 | Rama | Alcance |
 |---|---|
 | `feat/setup-proyecto` | Vite + React 19 + TS, PWA, i18n base, Docker, estructura y pantalla inicial. |
-| `feat/modelo-y-storage` | Tipos, servicio `localStorage`, servicio IndexedDB y hook de estado. |
+| `feat/modelo-y-storage` | Tipos, servicio de registros inmutables en IndexedDB, migración desde `localStorage` y hook de estado. |
 | `feat/form-parking` | Formulario de parking y guardado con hora automática. |
-| `feat/form-calle` | Formulario de calle, geolocalización, pago y enlace a Google Maps. |
+| `feat/form-calle` | Formulario de calle (modos GPS / dirección / completo), geolocalización, pago y enlace a Google Maps. |
 | `feat/foto-coche` | Captura, preview, reemplazo y borrado de foto en IndexedDB. |
 | `feat/vista-activo` | Vista del aparcamiento activo y acción "He recogido el coche". |
 | `feat/estilos-mobile` | Pulido mobile-first, tema, accesibilidad y traducciones completas. |
