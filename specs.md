@@ -152,6 +152,13 @@ La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
 - Los tests viven en `e2e/` y emulan un viewport móvil (Pixel 7), geolocalización, idioma y funcionamiento offline de la PWA.
 - `scripts/test.sh` ejecuta lint, tests unitarios y build; `scripts/e2e.sh` ejecuta Playwright; `scripts/check.sh` ejecuta ambos.
 
+### Servidor de pruebas manual
+
+- `scripts/servidor.sh` construye la app y sirve el build de producción con la PWA real en el puerto **4173**, accesible desde el móvil mediante la IP de la red local.
+- `scripts/servidor.sh --dev` arranca Vite con hot reload en el puerto **5173**.
+- `scripts/servidor.sh --stop` detiene los contenedores.
+- Limitación de plataforma: la API de geolocalización exige HTTPS o `localhost`. Al probar desde el móvil por HTTP, el GPS puede estar bloqueado; el flujo de calle debe probarse en `http://localhost:4173` (escritorio) o con un túnel HTTPS. La captura de foto con `<input capture>` no requiere HTTPS.
+
 ### Cloudflare Pages
 
 - Build de producción (`dist/`) generado dentro del contenedor.

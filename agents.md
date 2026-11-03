@@ -79,6 +79,11 @@ docker compose run --rm e2e
 ./scripts/e2e.sh     # tests E2E
 ./scripts/check.sh   # todo lo anterior
 
+# Servidor de pruebas manual
+./scripts/servidor.sh          # build de producción + PWA en :4173
+./scripts/servidor.sh --dev    # desarrollo con hot reload en :5173
+./scripts/servidor.sh --stop   # detener contenedores
+
 # Deploy a Cloudflare Pages (solo rama de deploy, token por entorno)
 docker compose run --rm -e CLOUDFLARE_API_TOKEN app npm run deploy
 ```
