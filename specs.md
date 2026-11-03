@@ -17,7 +17,7 @@ El usuario aparca el coche, abre la app, registra la ubicación (parking o calle
 
 ### RF-02 — Registrar aparcamiento en la calle
 
-- Campos obligatorios: **calle**, **número** y **ciudad**.
+- Campos obligatorios: **calle** y **número**. Campo opcional: **ciudad**.
 - **Coordenadas GPS**: botón que solicita `navigator.geolocation` y guarda `lat`/`lng`. Debe mostrar estado de carga y errores (permiso denegado, no disponible, timeout).
 - **Enlace a Google Maps**: visible en el registro activo, abre `https://www.google.com/maps?q=<lat>,<lng>` en pestaña nueva.
 - **Aparcamiento de pago**: selector sí/no (obligatorio, por defecto "no").
@@ -87,7 +87,7 @@ type AparcamientoCalle = AparcamientoBase & {
   tipo: "calle";
   calle: string;
   numero: string;
-  ciudad: string;
+  ciudad?: string;
   lat: number;
   lng: number;
   dePago: boolean;
@@ -113,7 +113,7 @@ La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
 ### Guardar en la calle
 
 1. Pantalla de entrada → "Calle".
-2. Rellenar calle, número y ciudad.
+2. Rellenar calle, número y ciudad (opcional).
 3. Pulsar "Usar mi ubicación" → se obtienen coordenadas (obligatorias para guardar).
 4. Indicar si es de pago.
 5. Adjuntar foto (opcional).

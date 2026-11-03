@@ -81,4 +81,13 @@ describe("RegistroActivo", () => {
       "https://www.google.com/maps?q=41.3874,2.1686",
     );
   });
+
+  it("muestra la dirección sin ciudad si no se indicó", () => {
+    const sinCiudad: AparcamientoCalle = { ...calle };
+    delete sinCiudad.ciudad;
+
+    render(<RegistroActivo aparcamiento={sinCiudad} onRecoger={vi.fn()} />);
+
+    expect(screen.getByText("Gran Via 10")).toBeInTheDocument();
+  });
 });

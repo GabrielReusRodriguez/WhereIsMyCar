@@ -65,7 +65,6 @@ export function FormularioCalle({ onGuardar, onCancelar }: Props) {
     if (
       calleValida === "" ||
       numeroValido === "" ||
-      ciudadValida === "" ||
       ubicacion.estado !== "ok"
     ) {
       setConError(true);
@@ -84,7 +83,7 @@ export function FormularioCalle({ onGuardar, onCancelar }: Props) {
         tipo: "calle",
         calle: calleValida,
         numero: numeroValido,
-        ciudad: ciudadValida,
+        ...(ciudadValida === "" ? {} : { ciudad: ciudadValida }),
         lat: ubicacion.lat,
         lng: ubicacion.lng,
         dePago,
@@ -145,8 +144,6 @@ export function FormularioCalle({ onGuardar, onCancelar }: Props) {
         valor={ciudad}
         onChange={setCiudad}
         autoComplete="address-level2"
-        requerido
-        error={conError && ciudad.trim() === ""}
       />
 
       <fieldset className="ubicacion">

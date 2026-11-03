@@ -19,7 +19,7 @@ export type AparcamientoCalle = AparcamientoBase & {
   tipo: "calle";
   calle: string;
   numero: string;
-  ciudad: string;
+  ciudad?: string;
   lat: number;
   lng: number;
   dePago: boolean;

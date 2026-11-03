@@ -28,7 +28,7 @@
     "calle": "Carrer",
     "calleAyuda": "Nom del carrer",
     "numero": "Número",
-    "ciudad": "Ciutat",
+    "ciudad": "Ciutat (opcional)",
     "ubicacion": "Ubicació GPS",
     "usarUbicacion": "Utilitza la meva ubicació",
     "obteniendoUbicacion": "Obtenint ubicació…",

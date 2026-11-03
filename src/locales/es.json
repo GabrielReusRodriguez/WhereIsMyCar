@@ -28,7 +28,7 @@
     "calle": "Calle",
     "calleAyuda": "Nombre de la calle",
     "numero": "Número",
-    "ciudad": "Ciudad",
+    "ciudad": "Ciudad (opcional)",
     "ubicacion": "Ubicación GPS",
     "usarUbicacion": "Usar mi ubicación",
     "obteniendoUbicacion": "Obteniendo ubicación…",
