@@ -43,6 +43,9 @@ Web app mobile-first para registrar dónde está aparcado el coche. Solo existe 
 ├── specs.md
 ├── Dockerfile
 ├── docker-compose.yml
+├── playwright.config.ts
+├── e2e/                 # tests end-to-end con Playwright
+├── scripts/             # atajos de test y verificación
 ├── public/              # assets estáticos e iconos PWA
 └── src/
     ├── main.tsx
@@ -67,6 +70,14 @@ docker compose run --rm app npm install
 docker compose run --rm app npm run lint
 docker compose run --rm app npm run test
 docker compose run --rm app npm run build
+
+# Tests E2E con Playwright (imagen oficial con navegadores, nada en el host)
+docker compose run --rm e2e
+
+# Atajos equivalentes
+./scripts/test.sh    # lint + tests unitarios + build
+./scripts/e2e.sh     # tests E2E
+./scripts/check.sh   # todo lo anterior
 
 # Deploy a Cloudflare Pages (solo rama de deploy, token por entorno)
 docker compose run --rm -e CLOUDFLARE_API_TOKEN app npm run deploy

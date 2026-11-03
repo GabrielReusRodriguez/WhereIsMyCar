@@ -8,4 +8,7 @@ dev-dist
 !.env.example
 .wrangler
 coverage
+test-results
+playwright-report
+blob-report
 *.log

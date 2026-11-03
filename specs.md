@@ -146,6 +146,12 @@ La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
 - `node_modules` vive en un volumen nombrado; el código se monta con bind mount para hot-reload.
 - Secretos solo por variables de entorno (`.env`, ignorado por git); se versiona `.env.example`.
 
+### Tests E2E
+
+- Playwright se ejecuta en el servicio `e2e` con la imagen oficial `mcr.microsoft.com/playwright`, que ya incluye los navegadores: **nada se instala en el host**.
+- Los tests viven en `e2e/` y emulan un viewport móvil (Pixel 7), geolocalización, idioma y funcionamiento offline de la PWA.
+- `scripts/test.sh` ejecuta lint, tests unitarios y build; `scripts/e2e.sh` ejecuta Playwright; `scripts/check.sh` ejecuta ambos.
+
 ### Cloudflare Pages
 
 - Build de producción (`dist/`) generado dentro del contenedor.
@@ -174,7 +180,7 @@ Una funcionalidad solo se considera terminada —y su rama puede integrarse en `
 1. Implementada en su rama `feat/*` desde `main`, con commits `feat:`/`fix:` en español imperativo.
 2. Cero dependencias, componentes o APIs deprecadas.
 3. Todo ejecutado dentro de Docker; nada instalado en el host.
-4. `npm run lint`, `npm run test` y `npm run build` pasan dentro del contenedor sin errores ni warnings.
+4. `npm run lint`, `npm run test`, `npm run test:e2e` y `npm run build` pasan dentro del contenedor sin errores ni warnings.
 5. Todas las strings visibles traducidas en `es` y `ca`.
 6. Verificada en viewport móvil y, cuando aplique, como PWA offline.
 7. Datos solo en `localStorage`/`IndexedDB`; ninguna llamada de red con datos del usuario.
