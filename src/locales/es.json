@@ -1,0 +1,15 @@
+{
+  "app": {
+    "titulo": "Where Is My Car",
+    "subtitulo": "¿Dónde has aparcado?"
+  },
+  "idioma": {
+    "etiqueta": "Idioma",
+    "es": "Castellano",
+    "ca": "Català"
+  },
+  "inicio": {
+    "descripcion": "Registra tu aparcamiento en segundos. Los datos se guardan solo en este dispositivo.",
+    "proximamente": "La app está en construcción: el registro de aparcamientos llegará en la siguiente versión."
+  }
+}
