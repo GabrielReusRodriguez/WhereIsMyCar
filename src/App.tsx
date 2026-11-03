@@ -46,16 +46,16 @@ export default function App() {
         <RegistroActivo aparcamiento={aparcamiento} onRecoger={recoger} />
       ) : tipoSeleccionado === "parking" ? (
         <FormularioParking
-          onGuardar={(datos) => {
-            guardar(datos);
+          onGuardar={(datos, fotoId) => {
+            guardar(datos, fotoId);
             cerrarFormulario();
           }}
           onCancelar={cerrarFormulario}
         />
       ) : tipoSeleccionado === "calle" ? (
         <FormularioCalle
-          onGuardar={(datos) => {
-            guardar(datos);
+          onGuardar={(datos, fotoId) => {
+            guardar(datos, fotoId);
             cerrarFormulario();
           }}
           onCancelar={cerrarFormulario}

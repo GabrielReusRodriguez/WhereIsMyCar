@@ -38,14 +38,24 @@
     "pagoSi": "Sí",
     "pagoNo": "No"
   },
+  "foto": {
+    "titulo": "Foto del coche (opcional)",
+    "ayuda": "Se abrirá la cámara del teléfono. También puedes elegir una imagen de la galería.",
+    "anadir": "Añadir foto",
+    "cambiar": "Cambiar foto",
+    "quitar": "Quitar foto",
+    "alt": "Foto del coche aparcado"
+  },
   "comun": {
     "guardar": "Guardar aparcamiento",
+    "guardando": "Guardando…",
     "cancelar": "Cancelar",
     "volver": "Volver",
     "obligatorio": "Campo obligatorio"
   },
   "errores": {
     "camposObligatorios": "Rellena los campos obligatorios.",
+    "guardar": "No se pudo guardar el aparcamiento. Inténtalo de nuevo.",
     "ubicacionObligatoria": "Obtén tu ubicación GPS antes de guardar.",
     "ubicacionPermiso": "No se pudo acceder a la ubicación. Revisa los permisos del navegador.",
     "ubicacionNoDisponible": "La ubicación no está disponible en este momento.",

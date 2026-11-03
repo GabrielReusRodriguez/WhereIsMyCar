@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import type { Aparcamiento } from "../types/aparcamiento";
 import { formatearFecha } from "../utils/fecha";
 import { urlGoogleMaps } from "../utils/googleMaps";
+import { FotoGuardada } from "./FotoGuardada";
 import type { Idioma } from "../i18n";
 
 type Props = {
@@ -32,6 +33,10 @@ export function RegistroActivo({ aparcamiento, onRecoger }: Props) {
           fecha: formatearFecha(aparcamiento.guardadoEn, idioma),
         })}
       </p>
+
+      {aparcamiento.fotoId !== undefined && (
+        <FotoGuardada fotoId={aparcamiento.fotoId} />
+      )}
 
       {aparcamiento.tipo === "parking" && (
         <dl className="registro__datos">

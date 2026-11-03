@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { NuevoAparcamiento } from "../types/aparcamiento";
+import { guardarFotoAparcamiento } from "../storage/indexedDb";
 import { CampoTexto } from "./CampoTexto";
+import { FotoCoche, type FotoSeleccionada } from "./FotoCoche";
 
 type Props = {
-  onGuardar: (datos: NuevoAparcamiento) => void;
+  onGuardar: (datos: NuevoAparcamiento, fotoId?: string) => void;
   onCancelar: () => void;
 };
 
@@ -13,9 +15,12 @@ export function FormularioParking({ onGuardar, onCancelar }: Props) {
   const [planta, setPlanta] = useState("");
   const [zona, setZona] = useState("");
   const [plaza, setPlaza] = useState("");
+  const [foto, setFoto] = useState<FotoSeleccionada | null>(null);
   const [conError, setConError] = useState(false);
+  const [guardando, setGuardando] = useState(false);
+  const [errorGuardado, setErrorGuardado] = useState(false);
 
-  const enviar = (evento: FormEvent<HTMLFormElement>) => {
+  const enviar = async (evento: FormEvent<HTMLFormElement>) => {
     evento.preventDefault();
 
     const plantaValida = planta.trim();
@@ -27,12 +32,30 @@ export function FormularioParking({ onGuardar, onCancelar }: Props) {
     }
 
     setConError(false);
-    onGuardar({
-      tipo: "parking",
-      planta: plantaValida,
-      ...(zona.trim() === "" ? {} : { zona: zona.trim() }),
-      plaza: plazaValida,
-    });
+    setErrorGuardado(false);
+    setGuardando(true);
+
+    try {
+      const fotoId =
+        foto === null ? undefined : await guardarFotoAparcamiento(foto.blob);
+
+      const datos: NuevoAparcamiento = {
+        tipo: "parking",
+        planta: plantaValida,
+        ...(zona.trim() === "" ? {} : { zona: zona.trim() }),
+        plaza: plazaValida,
+      };
+
+      if (fotoId === undefined) {
+        onGuardar(datos);
+      } else {
+        onGuardar(datos, fotoId);
+      }
+    } catch {
+      setErrorGuardado(true);
+    } finally {
+      setGuardando(false);
+    }
   };
 
   return (
@@ -42,6 +65,12 @@ export function FormularioParking({ onGuardar, onCancelar }: Props) {
       {conError && (
         <p className="error" role="alert">
           {t("errores.camposObligatorios")}
+        </p>
+      )}
+
+      {errorGuardado && (
+        <p className="error" role="alert">
+          {t("errores.guardar")}
         </p>
       )}
 
@@ -73,14 +102,21 @@ export function FormularioParking({ onGuardar, onCancelar }: Props) {
         error={conError && plaza.trim() === ""}
       />
 
+      <FotoCoche foto={foto} onCambio={setFoto} deshabilitado={guardando} />
+
       <div className="acciones">
-        <button type="submit" className="boton boton--primario">
-          {t("comun.guardar")}
+        <button
+          type="submit"
+          className="boton boton--primario"
+          disabled={guardando}
+        >
+          {guardando ? t("comun.guardando") : t("comun.guardar")}
         </button>
         <button
           type="button"
           className="boton boton--secundario"
           onClick={onCancelar}
+          disabled={guardando}
         >
           {t("comun.cancelar")}
         </button>

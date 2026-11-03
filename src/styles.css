@@ -446,6 +446,63 @@ button {
   text-decoration: none;
 }
 
+.foto {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.foto__leyenda {
+  font-weight: 600;
+}
+
+.foto__ayuda {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.foto__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.foto__preview {
+  width: 100%;
+  max-height: 280px;
+  border-radius: var(--radio);
+  object-fit: cover;
+}
+
+.foto__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.foto__acciones .boton {
+  cursor: pointer;
+}
+
+.foto__acciones .boton[aria-disabled="true"] {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.registro__foto {
+  width: 100%;
+  max-height: 320px;
+  border-radius: var(--radio);
+  object-fit: cover;
+}
+
 @media (min-width: 480px) {
   .app {
     gap: 32px;

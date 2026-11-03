@@ -38,14 +38,24 @@
     "pagoSi": "Sí",
     "pagoNo": "No"
   },
+  "foto": {
+    "titulo": "Foto del cotxe (opcional)",
+    "ayuda": "S'obrirà la càmera del telèfon. També pots triar una imatge de la galeria.",
+    "anadir": "Afegeix una foto",
+    "cambiar": "Canvia la foto",
+    "quitar": "Treu la foto",
+    "alt": "Foto del cotxe aparcat"
+  },
   "comun": {
     "guardar": "Guarda l'aparcament",
+    "guardando": "Desant…",
     "cancelar": "Cancel·la",
     "volver": "Torna",
     "obligatorio": "Camp obligatori"
   },
   "errores": {
     "camposObligatorios": "Omple els camps obligatoris.",
+    "guardar": "No s'ha pogut desar l'aparcament. Torna-ho a provar.",
     "ubicacionObligatoria": "Obtén la teva ubicació GPS abans de desar.",
     "ubicacionPermiso": "No s'ha pogut accedir a la ubicació. Revisa els permisos del navegador.",
     "ubicacionNoDisponible": "La ubicació no està disponible en aquest moment.",

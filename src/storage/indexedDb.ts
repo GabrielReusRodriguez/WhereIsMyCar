@@ -1,6 +1,7 @@
 export const DB_NOMBRE = "whereismycar";
 export const DB_VERSION = 1;
 export const ALMACEN_FOTOS = "fotos";
+export const FOTO_ID_ACTIVO = "activo";
 
 export type FotoGuardada = {
   id: string;
@@ -62,4 +63,13 @@ export async function leerFoto(id: string): Promise<FotoGuardada | null> {
 
 export async function borrarFoto(id: string): Promise<void> {
   await ejecutar("readwrite", (almacen) => almacen.delete(id));
+}
+
+export async function guardarFotoAparcamiento(blob: Blob): Promise<string> {
+  await guardarFoto({
+    id: FOTO_ID_ACTIVO,
+    blob,
+    tipoMime: blob.type === "" ? "image/jpeg" : blob.type,
+  });
+  return FOTO_ID_ACTIVO;
 }
