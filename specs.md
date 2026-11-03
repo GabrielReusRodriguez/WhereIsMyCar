@@ -159,13 +159,14 @@ La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
 - `scripts/servidor.sh --stop` detiene los contenedores.
 - Limitación de plataforma: la API de geolocalización exige HTTPS o `localhost`. Al probar desde el móvil por HTTP, el GPS puede estar bloqueado; el flujo de calle debe probarse en `http://localhost:4173` (escritorio) o con un túnel HTTPS. La captura de foto con `<input capture>` no requiere HTTPS.
 
-### Cloudflare Pages
+### Cloudflare Workers (Static Assets)
 
 - Build de producción (`dist/`) generado dentro del contenedor.
-- Deploy con `wrangler pages deploy` (wrangler como `devDependency`, ejecutado con `npx` dentro del contenedor); `wrangler.jsonc` define `pages_build_output_dir`.
-- Autenticación vía `CLOUDFLARE_API_TOKEN` en el entorno; nunca en el repositorio.
+- El despliegue es un **Worker con assets estáticos**, no un proyecto de Pages. `wrangler.jsonc` declara `assets.directory: "./dist"` y `not_found_handling: "single-page-application"`; no se usa `pages_build_output_dir`, así que `wrangler deploy` (y solo ese comando) es el correcto.
+- Deploy manual desde el contenedor: `docker compose run --rm app npm run deploy`.
+- El comando de deploy vive en el repositorio (`package.json`), no en la configuración del dashboard: no hay build ni deploy gestionados por Cloudflare desde Git, con lo que no puede desincronizarse.
 - `public/_headers`: el service worker (`sw.js`) y los chunks de Workbox se sirven con `Cache-Control: no-cache`.
-- `public/_redirects`: fallback SPA con `/* /index.html 200`.
+- El fallback SPA (`/* → /index.html`, 200) lo resuelve `not_found_handling: "single-page-application"`; no se versiona `_redirects`.
 
 ### Dependencias y auditoría
 
@@ -184,7 +185,7 @@ La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
 | `feat/foto-coche` | Captura, preview, reemplazo y borrado de foto en IndexedDB. |
 | `feat/vista-activo` | Vista del aparcamiento activo y acción "He recogido el coche". |
 | `feat/estilos-mobile` | Pulido mobile-first, tema, accesibilidad y traducciones completas. |
-| `feat/deploy-cloudflare` | `wrangler.jsonc`, `_headers`, verificación de PWA y despliegue en Pages. |
+| `feat/deploy-cloudflare` | `wrangler.jsonc`, `_headers`, verificación de PWA y despliegue en Workers. |
 
 ## 8. Definition of Done
 

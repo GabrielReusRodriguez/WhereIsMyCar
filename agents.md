@@ -16,7 +16,7 @@ Web app mobile-first para registrar dónde está aparcado el coche. Solo existe 
 | Persistencia | `localStorage` para el registro + IndexedDB para la foto (Blob) |
 | i18n | `react-i18next` con castellano (`es`) y catalán (`ca`) |
 | Entorno | Docker (desarrollo, tests y build) |
-| Despliegue | Cloudflare Pages |
+| Despliegue | Cloudflare Workers (Static Assets) |
 
 ## Reglas no negociables
 
@@ -84,8 +84,11 @@ docker compose run --rm e2e
 ./scripts/servidor.sh --dev    # desarrollo con hot reload en :5173
 ./scripts/servidor.sh --stop   # detener contenedores
 
-# Deploy a Cloudflare Pages (solo rama de deploy, token por entorno)
-docker compose run --rm -e CLOUDFLARE_API_TOKEN app npm run deploy
+# Deploy a Cloudflare Workers
+docker compose run --rm app npm run deploy
+
+# Comprobación del bundle sin publicar
+docker compose run --rm app npm run deploy:dry-run
 ```
 
 ## Flujo de trabajo por funcionalidad
