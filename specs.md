@@ -49,8 +49,12 @@ El usuario aparca el coche, abre la app, registra la ubicación (parking o calle
 ### RF-07 — Idiomas castellano y catalán
 
 - Toda la interfaz está traducida a `es` y `ca`.
-- Idioma inicial: el del navegador si es `ca`, en caso contrario `es`.
-- Selector de idioma visible y persistido en `localStorage`.
+- Idioma inicial, por orden de prioridad:
+  1. Parámetro de URL `?lang=es` o `?lang=ca` (cualquier otro valor se ignora).
+  2. Idioma persistido en `localStorage`.
+  3. Idioma del navegador si es `ca`, en caso contrario `es`.
+- Si se llega con `?lang=` válido, ese idioma pasa a ser el persistido.
+- Selector de idioma visible y persistido en `localStorage`; al cambiar de idioma se actualiza el parámetro `lang` de la URL (sin recargar ni añadir entradas al historial).
 
 ### RF-08 — Persistencia local y offline
 
@@ -94,7 +98,7 @@ type Aparcamiento = AparcamientoParking | AparcamientoCalle;
 
 Foto: IndexedDB, base `whereismycar`, store `fotos`, clave `id` del registro (`"activo"`), valor `{ id: string; blob: Blob; tipoMime: string }`.
 
-La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
+La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`. El parámetro de URL `lang` (`es` o `ca`) tiene prioridad sobre ese valor y, si es válido, se persiste al cargar.
 
 ## 4. Flujos de uso
 

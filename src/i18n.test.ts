@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { idiomaDesdeBusqueda } from "./i18n";
 import ca from "./locales/ca.json";
 import es from "./locales/es.json";
 
@@ -30,5 +31,22 @@ describe("traducciones", () => {
     for (const valor of [...valores(es), ...valores(ca)]) {
       expect(valor.trim()).not.toBe("");
     }
+  });
+});
+
+describe("idioma desde la URL", () => {
+  it("lee lang=es", () => {
+    expect(idiomaDesdeBusqueda("?lang=es")).toBe("es");
+  });
+
+  it("lee lang=ca", () => {
+    expect(idiomaDesdeBusqueda("?lang=ca")).toBe("ca");
+  });
+
+  it("ignora valores no soportados", () => {
+    expect(idiomaDesdeBusqueda("?lang=fr")).toBeNull();
+    expect(idiomaDesdeBusqueda("?lang=")).toBeNull();
+    expect(idiomaDesdeBusqueda("")).toBeNull();
+    expect(idiomaDesdeBusqueda("?otro=ca")).toBeNull();
   });
 });
