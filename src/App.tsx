@@ -12,7 +12,7 @@ const IDIOMAS: readonly Idioma[] = ["es", "ca"];
 
 export default function App() {
   const { t, i18n } = useTranslation();
-  const { aparcamiento, guardar, recoger } = useAparcamiento();
+  const { aparcamiento, cargado, guardar, recoger } = useAparcamiento();
   const [tipoSeleccionado, setTipoSeleccionado] =
     useState<TipoAparcamiento | null>(null);
 
@@ -42,20 +42,24 @@ export default function App() {
         </div>
       </header>
 
-      {aparcamiento !== null ? (
+      {!cargado ? (
+        <p className="cargando" role="status">
+          {t("comun.cargando")}
+        </p>
+      ) : aparcamiento !== null ? (
         <RegistroActivo aparcamiento={aparcamiento} onRecoger={recoger} />
       ) : tipoSeleccionado === "parking" ? (
         <FormularioParking
-          onGuardar={(datos, fotoId) => {
-            guardar(datos, fotoId);
+          onGuardar={(datos, foto) => {
+            void guardar(datos, foto);
             cerrarFormulario();
           }}
           onCancelar={cerrarFormulario}
         />
       ) : tipoSeleccionado === "calle" ? (
         <FormularioCalle
-          onGuardar={(datos, fotoId) => {
-            guardar(datos, fotoId);
+          onGuardar={(datos, foto) => {
+            void guardar(datos, foto);
             cerrarFormulario();
           }}
           onCancelar={cerrarFormulario}

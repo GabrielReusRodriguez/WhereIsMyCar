@@ -25,6 +25,10 @@
   },
   "calle": {
     "titulo": "Aparcament al carrer",
+    "modo": "Quines dades indicaràs?",
+    "modo_gps": "Només ubicació GPS",
+    "modo_direccion": "Només carrer i número",
+    "modo_completo": "Ubicació GPS i adreça",
     "calle": "Carrer",
     "calleAyuda": "Nom del carrer",
     "numero": "Número",
@@ -51,6 +55,7 @@
     "guardando": "Desant…",
     "cancelar": "Cancel·la",
     "volver": "Torna",
+    "cargando": "Carregant…",
     "obligatorio": "Camp obligatori"
   },
   "errores": {
@@ -75,7 +80,7 @@
     "coordenadas": "Coordenades",
     "recoger": "He recollit el cotxe",
     "confirmarTitulo": "Has recollit el cotxe?",
-    "confirmarTexto": "S'eliminarà l'aparcament i la foto d'aquest dispositiu. Aquesta acció no es pot desfer.",
+    "confirmarTexto": "Es marcarà el cotxe com a recollit i podràs registrar un nou aparcament. El registre actual es conserva en aquest dispositiu.",
     "confirmarSi": "Sí, he recollit el cotxe",
     "confirmarNo": "Cancel·la"
   }

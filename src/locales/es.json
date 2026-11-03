@@ -25,6 +25,10 @@
   },
   "calle": {
     "titulo": "Aparcamiento en la calle",
+    "modo": "¿Qué datos vas a indicar?",
+    "modo_gps": "Solo ubicación GPS",
+    "modo_direccion": "Solo calle y número",
+    "modo_completo": "Ubicación GPS y dirección",
     "calle": "Calle",
     "calleAyuda": "Nombre de la calle",
     "numero": "Número",
@@ -51,6 +55,7 @@
     "guardando": "Guardando…",
     "cancelar": "Cancelar",
     "volver": "Volver",
+    "cargando": "Cargando…",
     "obligatorio": "Campo obligatorio"
   },
   "errores": {
@@ -75,7 +80,7 @@
     "coordenadas": "Coordenadas",
     "recoger": "He recogido el coche",
     "confirmarTitulo": "¿Has recogido el coche?",
-    "confirmarTexto": "Se eliminará el aparcamiento y la foto de este dispositivo. Esta acción no se puede deshacer.",
+    "confirmarTexto": "Se marcará el coche como recogido y podrás registrar un nuevo aparcamiento. El registro actual se conserva en este dispositivo.",
     "confirmarSi": "Sí, he recogido el coche",
     "confirmarNo": "Cancelar"
   }

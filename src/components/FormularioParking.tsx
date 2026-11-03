@@ -1,12 +1,11 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { NuevoAparcamiento } from "../types/aparcamiento";
-import { guardarFotoAparcamiento } from "../storage/indexedDb";
 import { CampoTexto } from "./CampoTexto";
 import { FotoCoche, type FotoSeleccionada } from "./FotoCoche";
 
 type Props = {
-  onGuardar: (datos: NuevoAparcamiento, fotoId?: string) => void;
+  onGuardar: (datos: NuevoAparcamiento, foto?: Blob) => void;
   onCancelar: () => void;
 };
 
@@ -36,9 +35,6 @@ export function FormularioParking({ onGuardar, onCancelar }: Props) {
     setGuardando(true);
 
     try {
-      const fotoId =
-        foto === null ? undefined : await guardarFotoAparcamiento(foto.blob);
-
       const datos: NuevoAparcamiento = {
         tipo: "parking",
         planta: plantaValida,
@@ -46,10 +42,10 @@ export function FormularioParking({ onGuardar, onCancelar }: Props) {
         plaza: plazaValida,
       };
 
-      if (fotoId === undefined) {
+      if (foto === null) {
         onGuardar(datos);
       } else {
-        onGuardar(datos, fotoId);
+        onGuardar(datos, foto.blob);
       }
     } catch {
       setErrorGuardado(true);
