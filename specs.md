@@ -149,10 +149,10 @@ La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
 ### Cloudflare Pages
 
 - Build de producción (`dist/`) generado dentro del contenedor.
-- Deploy con `wrangler pages deploy dist/` (wrangler como `devDependency`, ejecutado con `npx` dentro del contenedor).
+- Deploy con `wrangler pages deploy` (wrangler como `devDependency`, ejecutado con `npx` dentro del contenedor); `wrangler.jsonc` define `pages_build_output_dir`.
 - Autenticación vía `CLOUDFLARE_API_TOKEN` en el entorno; nunca en el repositorio.
-- `public/_headers`: el service worker (`sw.js`) se sirve con `Cache-Control: no-cache`.
-- Fallback SPA configurado para rutas del cliente.
+- `public/_headers`: el service worker (`sw.js`) y los chunks de Workbox se sirven con `Cache-Control: no-cache`.
+- `public/_redirects`: fallback SPA con `/* /index.html 200`.
 
 ## 7. Roadmap de ramas
 
