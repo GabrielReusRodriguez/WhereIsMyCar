@@ -167,6 +167,12 @@ La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
 - `public/_headers`: el service worker (`sw.js`) y los chunks de Workbox se sirven con `Cache-Control: no-cache`.
 - `public/_redirects`: fallback SPA con `/* /index.html 200`.
 
+### Dependencias y auditoría
+
+- `overrides` en `package.json` fija `minimatch@^11.0.4` y `glob@^14.0.3` para eliminar las alertas de DoS y prototype pollution de las cadenas de ESLint, TypeScript-ESLint y Workbox.
+- Quedan 4 alertas `low` por `deepmerge` (transitiva de `workbox-build`, solo en tiempo de build) sin versión parcheada; se revisarán al actualizar `vite-plugin-pwa`/`workbox-build`.
+- El runtime (`react`, `react-dom`, `i18next`, `react-i18next`) no tiene dependencias vulnerables.
+
 ## 7. Roadmap de ramas
 
 | Rama | Alcance |
