@@ -72,7 +72,11 @@
     "pagoSi": "Sí",
     "pagoNo": "No",
     "verEnMaps": "Obre a Google Maps",
+    "coordenadas": "Coordenades",
     "recoger": "He recollit el cotxe",
-    "confirmarRecoger": "Segur que vols eliminar l'aparcament?"
+    "confirmarTitulo": "Has recollit el cotxe?",
+    "confirmarTexto": "S'eliminarà l'aparcament i la foto d'aquest dispositiu. Aquesta acció no es pot desfer.",
+    "confirmarSi": "Sí, he recollit el cotxe",
+    "confirmarNo": "Cancel·la"
   }
 }

@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { Aparcamiento } from "../types/aparcamiento";
 import { formatearFecha } from "../utils/fecha";
-import { urlGoogleMaps } from "../utils/googleMaps";
+import { formatearCoordenadas, urlGoogleMaps } from "../utils/googleMaps";
+import { DialogoConfirmacion } from "./DialogoConfirmacion";
 import { FotoGuardada } from "./FotoGuardada";
 import type { Idioma } from "../i18n";
 
@@ -12,12 +14,12 @@ type Props = {
 
 export function RegistroActivo({ aparcamiento, onRecoger }: Props) {
   const { t, i18n } = useTranslation();
+  const [confirmando, setConfirmando] = useState(false);
   const idioma: Idioma = i18n.language === "ca" ? "ca" : "es";
 
-  const recoger = () => {
-    if (window.confirm(t("guardado.confirmarRecoger"))) {
-      onRecoger();
-    }
+  const confirmar = () => {
+    setConfirmando(false);
+    void onRecoger();
   };
 
   return (
@@ -75,6 +77,12 @@ export function RegistroActivo({ aparcamiento, onRecoger }: Props) {
                   : t("guardado.pagoNo")}
               </dd>
             </div>
+            <div className="registro__dato registro__dato--ancho">
+              <dt>{t("guardado.coordenadas")}</dt>
+              <dd>
+                {formatearCoordenadas(aparcamiento.lat, aparcamiento.lng)}
+              </dd>
+            </div>
           </dl>
 
           <a
@@ -88,9 +96,23 @@ export function RegistroActivo({ aparcamiento, onRecoger }: Props) {
         </>
       )}
 
-      <button type="button" className="boton boton--peligro" onClick={recoger}>
+      <button
+        type="button"
+        className="boton boton--peligro"
+        onClick={() => setConfirmando(true)}
+      >
         {t("guardado.recoger")}
       </button>
+
+      <DialogoConfirmacion
+        abierto={confirmando}
+        titulo={t("guardado.confirmarTitulo")}
+        texto={t("guardado.confirmarTexto")}
+        etiquetaConfirmar={t("guardado.confirmarSi")}
+        etiquetaCancelar={t("guardado.confirmarNo")}
+        onConfirmar={confirmar}
+        onCancelar={() => setConfirmando(false)}
+      />
     </section>
   );
 }

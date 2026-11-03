@@ -503,6 +503,29 @@ button {
   object-fit: cover;
 }
 
+.dialogo {
+  width: min(480px, calc(100vw - 32px));
+  padding: 20px;
+  border: 1px solid var(--color-superficie-alta);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+}
+
+.dialogo::backdrop {
+  background: rgb(2 6 23 / 0.75);
+}
+
+.dialogo__titulo {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+}
+
+.dialogo__texto {
+  margin: 0 0 18px;
+  color: var(--color-texto-suave);
+}
+
 @media (min-width: 480px) {
   .app {
     gap: 32px;

@@ -72,7 +72,11 @@
     "pagoSi": "Sí",
     "pagoNo": "No",
     "verEnMaps": "Abrir en Google Maps",
+    "coordenadas": "Coordenadas",
     "recoger": "He recogido el coche",
-    "confirmarRecoger": "¿Seguro que quieres eliminar el aparcamiento?"
+    "confirmarTitulo": "¿Has recogido el coche?",
+    "confirmarTexto": "Se eliminará el aparcamiento y la foto de este dispositivo. Esta acción no se puede deshacer.",
+    "confirmarSi": "Sí, he recogido el coche",
+    "confirmarNo": "Cancelar"
   }
 }
