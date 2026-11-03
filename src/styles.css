@@ -6,6 +6,12 @@
   --color-texto-suave: #cbd5e1;
   --color-acento: #38bdf8;
   --color-acento-texto: #082f49;
+  --color-error: #fca5a5;
+  --color-error-fondo: rgb(248 113 113 / 0.15);
+  --color-error-borde: #f87171;
+  --color-exito: #86efac;
+  --color-peligro: #b91c1c;
+  --color-peligro-texto: #fef2f2;
   --radio: 16px;
   --espacio: 16px;
   --toque-minimo: 44px;
@@ -15,10 +21,34 @@
   line-height: 1.5;
 }
 
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-fondo: #f1f5f9;
+    --color-superficie: #ffffff;
+    --color-superficie-alta: #e2e8f0;
+    --color-texto: #0f172a;
+    --color-texto-suave: #475569;
+    --color-acento: #0284c7;
+    --color-acento-texto: #f0f9ff;
+    --color-error: #b91c1c;
+    --color-error-fondo: #fee2e2;
+    --color-error-borde: #dc2626;
+    --color-exito: #15803d;
+    --color-peligro: #dc2626;
+    --color-peligro-texto: #ffffff;
+
+    color-scheme: light;
+  }
+}
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 html,
@@ -28,6 +58,7 @@ body {
 }
 
 body {
+  min-height: 100dvh;
   background: var(--color-fondo);
   color: var(--color-texto);
   -webkit-font-smoothing: antialiased;
@@ -40,8 +71,14 @@ textarea {
   font: inherit;
 }
 
-button {
+button,
+label[for] {
   cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .app {
@@ -93,6 +130,10 @@ button {
   border-radius: 999px;
   background: transparent;
   color: var(--color-texto-suave);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
 }
 
 .idioma__boton--activo {
@@ -100,41 +141,6 @@ button {
   background: var(--color-acento);
   color: var(--color-acento-texto);
   font-weight: 600;
-}
-
-.idioma__boton:focus-visible {
-  outline: 3px solid var(--color-acento);
-  outline-offset: 2px;
-}
-
-.tarjeta {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 20px;
-  border: 1px solid var(--color-superficie-alta);
-  border-radius: var(--radio);
-  background: var(--color-superficie);
-}
-
-.tarjeta__titulo {
-  margin: 0;
-  font-size: 1.25rem;
-}
-
-.tarjeta__texto {
-  margin: 0;
-  color: var(--color-texto-suave);
-}
-
-.tarjeta__aviso {
-  margin: 0;
-  padding: 12px;
-  border-left: 3px solid var(--color-acento);
-  border-radius: 8px;
-  background: var(--color-superficie-alta);
-  color: var(--color-texto);
-  font-size: 0.95rem;
 }
 
 .selector {
@@ -171,16 +177,14 @@ button {
   color: var(--color-texto);
   font-size: 1.1rem;
   text-align: left;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
 }
 
 .selector__boton:not(:disabled):active {
   border-color: var(--color-acento);
   background: var(--color-superficie-alta);
-}
-
-.selector__boton:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
 }
 
 .selector__icono {
@@ -237,15 +241,12 @@ button {
   border-radius: 12px;
   background: var(--color-superficie);
   color: var(--color-texto);
-}
-
-.campo__input:focus-visible {
-  outline: 3px solid var(--color-acento);
-  outline-offset: 2px;
+  font-size: 1rem;
+  transition: border-color 150ms ease;
 }
 
 .campo__input--error {
-  border-color: #f87171;
+  border-color: var(--color-error-borde);
 }
 
 .campo__ayuda {
@@ -258,8 +259,8 @@ button {
   margin: 0;
   padding: 10px 12px;
   border-radius: 10px;
-  background: rgba(248, 113, 113, 0.15);
-  color: #fca5a5;
+  background: var(--color-error-fondo);
+  color: var(--color-error);
 }
 
 .acciones {
@@ -278,11 +279,11 @@ button {
   border: 1px solid transparent;
   border-radius: 12px;
   font-weight: 600;
-}
-
-.boton:focus-visible {
-  outline: 3px solid var(--color-acento);
-  outline-offset: 2px;
+  text-decoration: none;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    filter 150ms ease;
 }
 
 .boton--primario {
@@ -297,8 +298,8 @@ button {
 }
 
 .boton--peligro {
-  background: #b91c1c;
-  color: #fef2f2;
+  background: var(--color-peligro);
+  color: var(--color-peligro-texto);
 }
 
 .registro {
@@ -356,6 +357,14 @@ button {
   margin: 2px 0 0;
   font-size: 1.2rem;
   font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.registro__foto {
+  width: 100%;
+  max-height: 320px;
+  border-radius: var(--radio);
+  object-fit: cover;
 }
 
 .ubicacion {
@@ -385,7 +394,7 @@ button {
 
 .ubicacion__ok {
   margin: 0;
-  color: #86efac;
+  color: var(--color-exito);
   font-weight: 600;
 }
 
@@ -398,11 +407,6 @@ button {
 .enlace {
   color: var(--color-acento);
   font-weight: 600;
-}
-
-.enlace:focus-visible {
-  outline: 3px solid var(--color-acento);
-  outline-offset: 2px;
 }
 
 .pago {
@@ -430,20 +434,18 @@ button {
   border: 1px solid var(--color-superficie-alta);
   border-radius: 12px;
   background: var(--color-superficie);
-  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
 }
 
 .pago__opcion:has(input:checked) {
   border-color: var(--color-acento);
-  background: rgba(56, 189, 248, 0.15);
+  background: color-mix(in srgb, var(--color-acento) 15%, transparent);
 }
 
 .pago__opcion input {
   accent-color: var(--color-acento);
-}
-
-.boton {
-  text-decoration: none;
 }
 
 .foto {
@@ -487,20 +489,9 @@ button {
   gap: 10px;
 }
 
-.foto__acciones .boton {
-  cursor: pointer;
-}
-
 .foto__acciones .boton[aria-disabled="true"] {
   opacity: 0.55;
   pointer-events: none;
-}
-
-.registro__foto {
-  width: 100%;
-  max-height: 320px;
-  border-radius: var(--radio);
-  object-fit: cover;
 }
 
 .dialogo {
@@ -526,6 +517,31 @@ button {
   color: var(--color-texto-suave);
 }
 
+:where(button, a, input, label):focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .idioma__boton:hover,
+  .selector__boton:not(:disabled):hover {
+    border-color: var(--color-acento);
+  }
+
+  .boton:hover {
+    filter: brightness(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
 @media (min-width: 480px) {
   .app {
     gap: 32px;
@@ -539,5 +555,14 @@ button {
 
   .idioma {
     justify-content: flex-end;
+  }
+
+  .acciones {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .acciones .boton {
+    min-width: 180px;
   }
 }
