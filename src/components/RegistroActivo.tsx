@@ -65,8 +65,10 @@ export function RegistroActivo({ aparcamiento, onRecoger }: Props) {
             <div className="registro__dato registro__dato--ancho">
               <dt>{t("guardado.direccion")}</dt>
               <dd>
-                {aparcamiento.calle} {aparcamiento.numero},{" "}
-                {aparcamiento.ciudad}
+                {aparcamiento.calle} {aparcamiento.numero}
+                {aparcamiento.ciudad === undefined
+                  ? ""
+                  : `, ${aparcamiento.ciudad}`}
               </dd>
             </div>
             <div className="registro__dato">

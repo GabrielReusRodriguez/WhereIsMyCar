@@ -84,6 +84,19 @@ test.describe("aparcamiento en la calle", () => {
     );
   });
 
+  test("guarda sin ciudad porque es opcional", async ({ page }) => {
+    await page.getByRole("button", { name: "En la calle" }).click();
+    await page.getByLabel("Calle").fill("Gran Via");
+    await page.getByLabel("Número").fill("10");
+    await page.getByRole("button", { name: "Usar mi ubicación" }).click();
+
+    await expect(page.getByText("Ubicación obtenida")).toBeVisible();
+    await page.getByRole("button", { name: "Guardar aparcamiento" }).click();
+
+    await expect(page.getByText("Aparcamiento guardado")).toBeVisible();
+    await expect(page.getByText("Gran Via 10", { exact: true })).toBeVisible();
+  });
+
   test("no permite guardar sin ubicación GPS", async ({ page }) => {
     await page.getByRole("button", { name: "En la calle" }).click();
     await page.getByLabel("Calle").fill("Gran Via");

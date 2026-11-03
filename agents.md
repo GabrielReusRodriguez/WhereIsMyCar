@@ -28,7 +28,7 @@ Web app mobile-first para registrar dónde está aparcado el coche. Solo existe 
 2. **Sin APIs ni componentes deprecados.** Nada de APIs marcadas como deprecated en MDN, ni patrones obsoletos de React (class components, `componentWillMount`, etc.). Si una dependencia queda deprecada, se sustituye.
 3. **Almacenamiento 100 % local.** Prohibido enviar datos del usuario (ubicación, fotos, direcciones) a cualquier servicio externo. Nada de backend ni nube. La única salida de red permitida es el enlace a Google Maps que abre el usuario bajo demanda.
 4. **Un único aparcamiento.** El modelo no admite listas ni historial. Recoger el coche borra el registro y la foto.
-5. **i18n obligatorio.** Ninguna string visible sin traducir. Toda clave nueva se añade a `es` y a `ca` en el mismo commit.
+5. **i18n obligatorio.** Ninguna string visible sin traducir. Toda clave nueva se añade a `es` y a `ca` en el mismo commit. El idioma se puede forzar con `?lang=es` o `?lang=ca` en la URL.
 6. **Mobile-first.** El diseño se construye desde viewport móvil hacia arriba. Objetivos táctiles de al menos 44×44 px, `viewport` correcto, safe-areas y formularios usables con una mano.
 7. **Una rama por funcionalidad.** Cada funcionalidad nace de `main` en una rama `feat/descripcion-corta`, se implementa, se verifica y se integra en `main`. No se mezclan funcionalidades en una rama.
 8. **Conventional Commits en español**, imperativo y minúscula inicial: `feat:`, `fix:`, `docs:`, `refactor:`, etc. Máximo 72 caracteres en el asunto.

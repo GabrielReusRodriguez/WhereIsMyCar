@@ -17,7 +17,7 @@ El usuario aparca el coche, abre la app, registra la ubicación (parking o calle
 
 ### RF-02 — Registrar aparcamiento en la calle
 
-- Campos obligatorios: **calle**, **número** y **ciudad**.
+- Campos obligatorios: **calle** y **número**. Campo opcional: **ciudad**.
 - **Coordenadas GPS**: botón que solicita `navigator.geolocation` y guarda `lat`/`lng`. Debe mostrar estado de carga y errores (permiso denegado, no disponible, timeout).
 - **Enlace a Google Maps**: visible en el registro activo, abre `https://www.google.com/maps?q=<lat>,<lng>` en pestaña nueva.
 - **Aparcamiento de pago**: selector sí/no (obligatorio, por defecto "no").
@@ -49,8 +49,12 @@ El usuario aparca el coche, abre la app, registra la ubicación (parking o calle
 ### RF-07 — Idiomas castellano y catalán
 
 - Toda la interfaz está traducida a `es` y `ca`.
-- Idioma inicial: el del navegador si es `ca`, en caso contrario `es`.
-- Selector de idioma visible y persistido en `localStorage`.
+- Idioma inicial, por orden de prioridad:
+  1. Parámetro de URL `?lang=es` o `?lang=ca` (cualquier otro valor se ignora).
+  2. Idioma persistido en `localStorage`.
+  3. Idioma del navegador si es `ca`, en caso contrario `es`.
+- Si se llega con `?lang=` válido, ese idioma pasa a ser el persistido.
+- Selector de idioma visible y persistido en `localStorage`; al cambiar de idioma se actualiza el parámetro `lang` de la URL (sin recargar ni añadir entradas al historial).
 
 ### RF-08 — Persistencia local y offline
 
@@ -83,7 +87,7 @@ type AparcamientoCalle = AparcamientoBase & {
   tipo: "calle";
   calle: string;
   numero: string;
-  ciudad: string;
+  ciudad?: string;
   lat: number;
   lng: number;
   dePago: boolean;
@@ -94,7 +98,7 @@ type Aparcamiento = AparcamientoParking | AparcamientoCalle;
 
 Foto: IndexedDB, base `whereismycar`, store `fotos`, clave `id` del registro (`"activo"`), valor `{ id: string; blob: Blob; tipoMime: string }`.
 
-La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
+La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`. El parámetro de URL `lang` (`es` o `ca`) tiene prioridad sobre ese valor y, si es válido, se persiste al cargar.
 
 ## 4. Flujos de uso
 
@@ -109,7 +113,7 @@ La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
 ### Guardar en la calle
 
 1. Pantalla de entrada → "Calle".
-2. Rellenar calle, número y ciudad.
+2. Rellenar calle, número y ciudad (opcional).
 3. Pulsar "Usar mi ubicación" → se obtienen coordenadas (obligatorias para guardar).
 4. Indicar si es de pago.
 5. Adjuntar foto (opcional).

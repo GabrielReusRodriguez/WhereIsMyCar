@@ -62,6 +62,30 @@ describe("FormularioCalle", () => {
     });
   });
 
+  it("guarda sin ciudad porque es opcional", async () => {
+    const onGuardar = vi.fn();
+    const usuario = userEvent.setup();
+
+    render(<FormularioCalle onGuardar={onGuardar} onCancelar={() => {}} />);
+
+    await usuario.type(screen.getByLabelText(/^calle/i), "Gran Via");
+    await usuario.type(screen.getByLabelText(/número/i), "10");
+    await usuario.click(
+      screen.getByRole("button", { name: /usar mi ubicación/i }),
+    );
+    await screen.findByText(/ubicación obtenida/i);
+    await usuario.click(screen.getByRole("button", { name: /guardar/i }));
+
+    expect(onGuardar).toHaveBeenCalledWith({
+      tipo: "calle",
+      calle: "Gran Via",
+      numero: "10",
+      lat: 41.3874,
+      lng: 2.1686,
+      dePago: false,
+    });
+  });
+
   it("no guarda si falta la ubicación GPS", async () => {
     const onGuardar = vi.fn();
     const usuario = userEvent.setup();
