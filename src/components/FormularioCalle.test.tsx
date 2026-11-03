@@ -31,19 +31,23 @@ function mockErrorUbicacion(code: number) {
   });
 }
 
+function renderFormulario() {
+  const onGuardar = vi.fn();
+  const usuario = userEvent.setup();
+  render(<FormularioCalle onGuardar={onGuardar} onCancelar={() => {}} />);
+  return { onGuardar, usuario };
+}
+
 describe("FormularioCalle", () => {
   beforeEach(() => {
     mockUbicacion();
   });
 
-  it("obtiene la ubicación y guarda los datos de la calle", async () => {
-    const onGuardar = vi.fn();
-    const usuario = userEvent.setup();
-
-    render(<FormularioCalle onGuardar={onGuardar} onCancelar={() => {}} />);
+  it("guarda en modo completo con GPS y dirección", async () => {
+    const { onGuardar, usuario } = renderFormulario();
 
     await usuario.type(screen.getByLabelText(/^calle/i), "Gran Via");
-    await usuario.type(screen.getByLabelText(/número/i), "10");
+    await usuario.type(screen.getByLabelText(/^número/i), "10");
     await usuario.type(screen.getByLabelText(/ciudad/i), "Barcelona");
     await usuario.click(
       screen.getByRole("button", { name: /usar mi ubicación/i }),
@@ -53,23 +57,21 @@ describe("FormularioCalle", () => {
 
     expect(onGuardar).toHaveBeenCalledWith({
       tipo: "calle",
-      calle: "Gran Via",
-      numero: "10",
-      ciudad: "Barcelona",
-      lat: 41.3874,
-      lng: 2.1686,
+      modo: "completo",
+      gps: { lat: 41.3874, lng: 2.1686 },
+      direccion: { calle: "Gran Via", numero: "10", ciudad: "Barcelona" },
       dePago: false,
     });
   });
 
-  it("guarda sin ciudad porque es opcional", async () => {
-    const onGuardar = vi.fn();
-    const usuario = userEvent.setup();
+  it("guarda solo con GPS sin pedir dirección", async () => {
+    const { onGuardar, usuario } = renderFormulario();
 
-    render(<FormularioCalle onGuardar={onGuardar} onCancelar={() => {}} />);
+    await usuario.click(
+      screen.getByRole("radio", { name: /solo ubicación gps/i }),
+    );
+    expect(screen.queryByLabelText(/^calle/i)).not.toBeInTheDocument();
 
-    await usuario.type(screen.getByLabelText(/^calle/i), "Gran Via");
-    await usuario.type(screen.getByLabelText(/número/i), "10");
     await usuario.click(
       screen.getByRole("button", { name: /usar mi ubicación/i }),
     );
@@ -78,23 +80,40 @@ describe("FormularioCalle", () => {
 
     expect(onGuardar).toHaveBeenCalledWith({
       tipo: "calle",
-      calle: "Gran Via",
-      numero: "10",
-      lat: 41.3874,
-      lng: 2.1686,
+      modo: "gps",
+      gps: { lat: 41.3874, lng: 2.1686 },
       dePago: false,
     });
   });
 
-  it("no guarda si falta la ubicación GPS", async () => {
-    const onGuardar = vi.fn();
-    const usuario = userEvent.setup();
+  it("guarda solo con dirección sin GPS", async () => {
+    const { onGuardar, usuario } = renderFormulario();
 
-    render(<FormularioCalle onGuardar={onGuardar} onCancelar={() => {}} />);
+    await usuario.click(
+      screen.getByRole("radio", { name: /solo calle y número/i }),
+    );
+    expect(
+      screen.queryByRole("button", { name: /usar mi ubicación/i }),
+    ).not.toBeInTheDocument();
 
     await usuario.type(screen.getByLabelText(/^calle/i), "Gran Via");
-    await usuario.type(screen.getByLabelText(/número/i), "10");
-    await usuario.type(screen.getByLabelText(/ciudad/i), "Barcelona");
+    await usuario.type(screen.getByLabelText(/^número/i), "10");
+    await usuario.click(screen.getByRole("button", { name: /guardar/i }));
+
+    expect(onGuardar).toHaveBeenCalledWith({
+      tipo: "calle",
+      modo: "direccion",
+      direccion: { calle: "Gran Via", numero: "10" },
+      dePago: false,
+    });
+  });
+
+  it("no guarda en modo GPS si falta la ubicación", async () => {
+    const { onGuardar, usuario } = renderFormulario();
+
+    await usuario.click(
+      screen.getByRole("radio", { name: /solo ubicación gps/i }),
+    );
     await usuario.click(screen.getByRole("button", { name: /guardar/i }));
 
     expect(onGuardar).not.toHaveBeenCalled();
@@ -103,19 +122,28 @@ describe("FormularioCalle", () => {
     ).toBeInTheDocument();
   });
 
-  it("marca el aparcamiento como de pago", async () => {
-    const onGuardar = vi.fn();
-    const usuario = userEvent.setup();
+  it("no guarda en modo dirección sin calle ni número", async () => {
+    const { onGuardar, usuario } = renderFormulario();
 
-    render(<FormularioCalle onGuardar={onGuardar} onCancelar={() => {}} />);
-
-    await usuario.type(screen.getByLabelText(/^calle/i), "Gran Via");
-    await usuario.type(screen.getByLabelText(/número/i), "10");
-    await usuario.type(screen.getByLabelText(/ciudad/i), "Barcelona");
     await usuario.click(
-      screen.getByRole("button", { name: /usar mi ubicación/i }),
+      screen.getByRole("radio", { name: /solo calle y número/i }),
     );
-    await screen.findByText(/ubicación obtenida/i);
+    await usuario.click(screen.getByRole("button", { name: /guardar/i }));
+
+    expect(onGuardar).not.toHaveBeenCalled();
+    expect(
+      screen.getByText(/rellena los campos obligatorios/i),
+    ).toBeInTheDocument();
+  });
+
+  it("marca el aparcamiento como de pago", async () => {
+    const { onGuardar, usuario } = renderFormulario();
+
+    await usuario.click(
+      screen.getByRole("radio", { name: /solo calle y número/i }),
+    );
+    await usuario.type(screen.getByLabelText(/^calle/i), "Gran Via");
+    await usuario.type(screen.getByLabelText(/^número/i), "10");
     await usuario.click(screen.getByRole("radio", { name: /^sí$/i }));
     await usuario.click(screen.getByRole("button", { name: /guardar/i }));
 
@@ -126,9 +154,7 @@ describe("FormularioCalle", () => {
 
   it("muestra el error cuando se deniega el permiso", async () => {
     mockErrorUbicacion(1);
-    const usuario = userEvent.setup();
-
-    render(<FormularioCalle onGuardar={vi.fn()} onCancelar={() => {}} />);
+    const { usuario } = renderFormulario();
 
     await usuario.click(
       screen.getByRole("button", { name: /usar mi ubicación/i }),

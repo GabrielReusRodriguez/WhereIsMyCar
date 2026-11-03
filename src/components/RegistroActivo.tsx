@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { Aparcamiento } from "../types/aparcamiento";
+import type { Aparcamiento, Direccion } from "../types/aparcamiento";
 import { formatearFecha } from "../utils/fecha";
 import { formatearCoordenadas, urlGoogleMaps } from "../utils/googleMaps";
 import { DialogoConfirmacion } from "./DialogoConfirmacion";
@@ -11,6 +11,11 @@ type Props = {
   aparcamiento: Aparcamiento;
   onRecoger: () => void;
 };
+
+function formatearDireccion(direccion: Direccion): string {
+  const base = `${direccion.calle} ${direccion.numero}`;
+  return direccion.ciudad === undefined ? base : `${base}, ${direccion.ciudad}`;
+}
 
 export function RegistroActivo({ aparcamiento, onRecoger }: Props) {
   const { t, i18n } = useTranslation();
@@ -62,15 +67,12 @@ export function RegistroActivo({ aparcamiento, onRecoger }: Props) {
       {aparcamiento.tipo === "calle" && (
         <>
           <dl className="registro__datos">
-            <div className="registro__dato registro__dato--ancho">
-              <dt>{t("guardado.direccion")}</dt>
-              <dd>
-                {aparcamiento.calle} {aparcamiento.numero}
-                {aparcamiento.ciudad === undefined
-                  ? ""
-                  : `, ${aparcamiento.ciudad}`}
-              </dd>
-            </div>
+            {aparcamiento.modo !== "gps" && (
+              <div className="registro__dato registro__dato--ancho">
+                <dt>{t("guardado.direccion")}</dt>
+                <dd>{formatearDireccion(aparcamiento.direccion)}</dd>
+              </div>
+            )}
             <div className="registro__dato">
               <dt>{t("guardado.pago")}</dt>
               <dd>
@@ -79,22 +81,29 @@ export function RegistroActivo({ aparcamiento, onRecoger }: Props) {
                   : t("guardado.pagoNo")}
               </dd>
             </div>
-            <div className="registro__dato registro__dato--ancho">
-              <dt>{t("guardado.coordenadas")}</dt>
-              <dd>
-                {formatearCoordenadas(aparcamiento.lat, aparcamiento.lng)}
-              </dd>
-            </div>
+            {aparcamiento.modo !== "direccion" && (
+              <div className="registro__dato registro__dato--ancho">
+                <dt>{t("guardado.coordenadas")}</dt>
+                <dd>
+                  {formatearCoordenadas(
+                    aparcamiento.gps.lat,
+                    aparcamiento.gps.lng,
+                  )}
+                </dd>
+              </div>
+            )}
           </dl>
 
-          <a
-            className="boton boton--secundario"
-            href={urlGoogleMaps(aparcamiento.lat, aparcamiento.lng)}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {t("guardado.verEnMaps")}
-          </a>
+          {aparcamiento.modo !== "direccion" && (
+            <a
+              className="boton boton--secundario"
+              href={urlGoogleMaps(aparcamiento.gps.lat, aparcamiento.gps.lng)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t("guardado.verEnMaps")}
+            </a>
+          )}
         </>
       )}
 

@@ -377,9 +377,54 @@ button:disabled {
 }
 
 .ubicacion__leyenda,
-.pago__leyenda {
+.pago__leyenda,
+.modo__leyenda {
   padding: 0;
   font-weight: 600;
+}
+
+.modo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.modo__opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modo__opcion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--toque-minimo);
+  padding: 10px 14px;
+  border: 1px solid var(--color-superficie-alta);
+  border-radius: 12px;
+  background: var(--color-superficie);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.modo__opcion:has(input:checked) {
+  border-color: var(--color-acento);
+  background: color-mix(in srgb, var(--color-acento) 15%, transparent);
+}
+
+.modo__opcion input {
+  accent-color: var(--color-acento);
+}
+
+.cargando {
+  margin: 0;
+  color: var(--color-texto-suave);
+  text-align: center;
 }
 
 .ubicacion__resultado {

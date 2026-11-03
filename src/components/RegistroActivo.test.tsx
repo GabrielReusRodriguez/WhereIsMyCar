@@ -6,7 +6,7 @@ import type { AparcamientoCalle, AparcamientoParking } from "../types/aparcamien
 import { RegistroActivo } from "./RegistroActivo";
 
 const parking: AparcamientoParking = {
-  id: "activo",
+  id: "p1",
   tipo: "parking",
   guardadoEn: new Date(2024, 4, 1, 10, 30).getTime(),
   planta: "-2",
@@ -14,15 +14,13 @@ const parking: AparcamientoParking = {
   plaza: "42",
 };
 
-const calle: AparcamientoCalle = {
-  id: "activo",
+const calleCompleta: AparcamientoCalle = {
+  id: "c1",
   tipo: "calle",
+  modo: "completo",
   guardadoEn: new Date(2024, 4, 1, 10, 30).getTime(),
-  calle: "Gran Via",
-  numero: "10",
-  ciudad: "Barcelona",
-  lat: 41.3874,
-  lng: 2.1686,
+  gps: { lat: 41.3874, lng: 2.1686 },
+  direccion: { calle: "Gran Via", numero: "10", ciudad: "Barcelona" },
   dePago: true,
 };
 
@@ -45,7 +43,7 @@ describe("RegistroActivo", () => {
       screen.getByRole("button", { name: /^he recogido el coche$/i }),
     );
     expect(
-      screen.getByText(/se eliminará el aparcamiento/i),
+      screen.getByText(/se marcará el coche como recogido/i),
     ).toBeInTheDocument();
 
     await usuario.click(
@@ -69,11 +67,12 @@ describe("RegistroActivo", () => {
     expect(onRecoger).not.toHaveBeenCalled();
   });
 
-  it("muestra la dirección, el pago y el enlace a Google Maps", () => {
-    render(<RegistroActivo aparcamiento={calle} onRecoger={vi.fn()} />);
+  it("muestra dirección, pago, coordenadas y enlace en modo completo", () => {
+    render(<RegistroActivo aparcamiento={calleCompleta} onRecoger={vi.fn()} />);
 
     expect(screen.getByText("Gran Via 10, Barcelona")).toBeInTheDocument();
     expect(screen.getByText("Sí")).toBeInTheDocument();
+    expect(screen.getByText("41.38740, 2.16860")).toBeInTheDocument();
 
     const enlace = screen.getByRole("link", { name: /google maps/i });
     expect(enlace).toHaveAttribute(
@@ -82,12 +81,41 @@ describe("RegistroActivo", () => {
     );
   });
 
-  it("muestra la dirección sin ciudad si no se indicó", () => {
-    const sinCiudad: AparcamientoCalle = { ...calle };
-    delete sinCiudad.ciudad;
+  it("en modo solo GPS no muestra dirección", () => {
+    const soloGps: AparcamientoCalle = {
+      id: "c2",
+      tipo: "calle",
+      modo: "gps",
+      guardadoEn: calleCompleta.guardadoEn,
+      gps: { lat: 41.3874, lng: 2.1686 },
+      dePago: false,
+    };
 
-    render(<RegistroActivo aparcamiento={sinCiudad} onRecoger={vi.fn()} />);
+    render(<RegistroActivo aparcamiento={soloGps} onRecoger={vi.fn()} />);
+
+    expect(screen.queryByText("Dirección")).not.toBeInTheDocument();
+    expect(screen.getByText("41.38740, 2.16860")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /google maps/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("en modo solo dirección no muestra coordenadas ni enlace", () => {
+    const soloDireccion: AparcamientoCalle = {
+      id: "c3",
+      tipo: "calle",
+      modo: "direccion",
+      guardadoEn: calleCompleta.guardadoEn,
+      direccion: { calle: "Gran Via", numero: "10" },
+      dePago: false,
+    };
+
+    render(<RegistroActivo aparcamiento={soloDireccion} onRecoger={vi.fn()} />);
 
     expect(screen.getByText("Gran Via 10")).toBeInTheDocument();
+    expect(screen.queryByText("Coordenadas")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: /google maps/i }),
+    ).not.toBeInTheDocument();
   });
 });

@@ -2,7 +2,15 @@ import { expect, test } from "@playwright/test";
 
 async function empezarLimpio(page: import("@playwright/test").Page) {
   await page.goto("/");
-  await page.evaluate(() => localStorage.clear());
+  await page.evaluate(async () => {
+    localStorage.clear();
+    await new Promise<void>((resolve) => {
+      const peticion = indexedDB.deleteDatabase("whereismycar");
+      peticion.onsuccess = () => resolve();
+      peticion.onerror = () => resolve();
+      peticion.onblocked = () => resolve();
+    });
+  });
   await page.reload();
 }
 
@@ -11,7 +19,7 @@ test.describe("aparcamiento en parking", () => {
     await empezarLimpio(page);
   });
 
-  test("guarda, persiste y se elimina al recoger el coche", async ({ page }) => {
+  test("guarda, persiste y desaparece al recoger el coche", async ({ page }) => {
     await expect(
       page.getByRole("heading", { name: "¿Dónde has aparcado?" }),
     ).toBeVisible();
@@ -65,9 +73,9 @@ test.describe("aparcamiento en la calle", () => {
 
   test("guarda dirección, GPS, pago y enlace a Google Maps", async ({ page }) => {
     await page.getByRole("button", { name: "En la calle" }).click();
-    await page.getByLabel("Calle").fill("Gran Via");
-    await page.getByLabel("Número").fill("10");
-    await page.getByLabel("Ciudad").fill("Barcelona");
+    await page.getByRole("textbox", { name: "Calle" }).fill("Gran Via");
+    await page.getByRole("textbox", { name: "Número" }).fill("10");
+    await page.getByRole("textbox", { name: "Ciudad" }).fill("Barcelona");
     await page.getByRole("button", { name: "Usar mi ubicación" }).click();
 
     await expect(page.getByText("Ubicación obtenida")).toBeVisible();
@@ -84,10 +92,38 @@ test.describe("aparcamiento en la calle", () => {
     );
   });
 
+  test("guarda solo con GPS", async ({ page }) => {
+    await page.getByRole("button", { name: "En la calle" }).click();
+    await page.getByRole("radio", { name: "Solo ubicación GPS" }).check();
+    await page.getByRole("button", { name: "Usar mi ubicación" }).click();
+
+    await expect(page.getByText("Ubicación obtenida")).toBeVisible();
+    await page.getByRole("button", { name: "Guardar aparcamiento" }).click();
+
+    await expect(page.getByText("Aparcamiento guardado")).toBeVisible();
+    await expect(page.getByText("41.38740, 2.16860")).toBeVisible();
+    await expect(page.getByText("Dirección")).toHaveCount(0);
+  });
+
+  test("guarda solo con calle y número, sin GPS", async ({ page }) => {
+    await page.getByRole("button", { name: "En la calle" }).click();
+    await page.getByRole("radio", { name: "Solo calle y número" }).check();
+    await page.getByRole("textbox", { name: "Calle" }).fill("Gran Via");
+    await page.getByRole("textbox", { name: "Número" }).fill("10");
+    await page.getByRole("button", { name: "Guardar aparcamiento" }).click();
+
+    await expect(page.getByText("Aparcamiento guardado")).toBeVisible();
+    await expect(page.getByText("Gran Via 10", { exact: true })).toBeVisible();
+    await expect(page.getByText("Coordenadas")).toHaveCount(0);
+    await expect(
+      page.getByRole("link", { name: "Abrir en Google Maps" }),
+    ).toHaveCount(0);
+  });
+
   test("guarda sin ciudad porque es opcional", async ({ page }) => {
     await page.getByRole("button", { name: "En la calle" }).click();
-    await page.getByLabel("Calle").fill("Gran Via");
-    await page.getByLabel("Número").fill("10");
+    await page.getByRole("textbox", { name: "Calle" }).fill("Gran Via");
+    await page.getByRole("textbox", { name: "Número" }).fill("10");
     await page.getByRole("button", { name: "Usar mi ubicación" }).click();
 
     await expect(page.getByText("Ubicación obtenida")).toBeVisible();
@@ -97,16 +133,58 @@ test.describe("aparcamiento en la calle", () => {
     await expect(page.getByText("Gran Via 10", { exact: true })).toBeVisible();
   });
 
-  test("no permite guardar sin ubicación GPS", async ({ page }) => {
+  test("no permite guardar en modo completo sin ubicación GPS", async ({
+    page,
+  }) => {
     await page.getByRole("button", { name: "En la calle" }).click();
-    await page.getByLabel("Calle").fill("Gran Via");
-    await page.getByLabel("Número").fill("10");
-    await page.getByLabel("Ciudad").fill("Barcelona");
+    await page.getByRole("textbox", { name: "Calle" }).fill("Gran Via");
+    await page.getByRole("textbox", { name: "Número" }).fill("10");
+    await page.getByRole("textbox", { name: "Ciudad" }).fill("Barcelona");
     await page.getByRole("button", { name: "Guardar aparcamiento" }).click();
 
     await expect(
       page.getByText("Obtén tu ubicación GPS antes de guardar."),
     ).toBeVisible();
     await expect(page.getByText("Aparcamiento guardado")).toHaveCount(0);
+  });
+
+  test("el registro se conserva tras recoger el coche", async ({ page }) => {
+    await page.getByRole("button", { name: "En la calle" }).click();
+    await page.getByRole("radio", { name: "Solo calle y número" }).check();
+    await page.getByRole("textbox", { name: "Calle" }).fill("Gran Via");
+    await page.getByRole("textbox", { name: "Número" }).fill("10");
+    await page.getByRole("button", { name: "Guardar aparcamiento" }).click();
+
+    await expect(page.getByText("Aparcamiento guardado")).toBeVisible();
+
+    await page
+      .getByRole("button", { name: "He recogido el coche", exact: true })
+      .click();
+    await page
+      .getByRole("button", { name: "Sí, he recogido el coche" })
+      .click();
+
+    await expect(
+      page.getByRole("heading", { name: "¿Dónde has aparcado?" }),
+    ).toBeVisible();
+
+    const registros = await page.evaluate(
+      () =>
+        new Promise<number>((resolve, reject) => {
+          const peticion = indexedDB.open("whereismycar");
+          peticion.onerror = () => reject(peticion.error);
+          peticion.onsuccess = () => {
+            const db = peticion.result;
+            const tx = db.transaction("aparcamientos", "readonly");
+            const contar = tx.objectStore("aparcamientos").count();
+            contar.onsuccess = () => {
+              db.close();
+              resolve(contar.result);
+            };
+          };
+        }),
+    );
+
+    expect(registros).toBe(1);
   });
 });

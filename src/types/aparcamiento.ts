@@ -1,7 +1,21 @@
 export type TipoAparcamiento = "parking" | "calle";
 
+/** Coordenadas GPS de un aparcamiento en la calle. */
+export type UbicacionGps = {
+  lat: number;
+  lng: number;
+};
+
+/** Dirección postal de un aparcamiento en la calle. */
+export type Direccion = {
+  calle: string;
+  numero: string;
+  ciudad?: string;
+};
+
 type AparcamientoBase = {
-  id: "activo";
+  /** Identificador único e inmutable del registro. */
+  id: string;
   /** Hora en la que se guardó el aparcamiento (epoch ms). */
   guardadoEn: number;
   /** Clave de la foto en IndexedDB, si existe. */
@@ -15,17 +29,33 @@ export type AparcamientoParking = AparcamientoBase & {
   plaza: string;
 };
 
-export type AparcamientoCalle = AparcamientoBase & {
+type AparcamientoCalleBase = AparcamientoBase & {
   tipo: "calle";
-  calle: string;
-  numero: string;
-  ciudad?: string;
-  lat: number;
-  lng: number;
   dePago: boolean;
 };
 
+/**
+ * Un aparcamiento en la calle se registra en uno de tres modos:
+ * solo GPS, solo dirección o ambos.
+ */
+export type AparcamientoCalle =
+  | (AparcamientoCalleBase & { modo: "gps"; gps: UbicacionGps })
+  | (AparcamientoCalleBase & { modo: "direccion"; direccion: Direccion })
+  | (AparcamientoCalleBase & {
+      modo: "completo";
+      gps: UbicacionGps;
+      direccion: Direccion;
+    });
+
 export type Aparcamiento = AparcamientoParking | AparcamientoCalle;
+
+/** Evento inmutable asociado a un aparcamiento. */
+export type EventoAparcamiento = {
+  id: string;
+  tipo: "recogido";
+  aparcamientoId: string;
+  ocurridoEn: number;
+};
 
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
   ? Omit<T, K>
