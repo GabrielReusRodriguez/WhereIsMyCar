@@ -30,10 +30,9 @@ Web app mobile-first para registrar dónde está aparcado el coche. Solo existe 
 4. **Un único aparcamiento.** El modelo no admite listas ni historial. Recoger el coche borra el registro y la foto.
 5. **i18n obligatorio.** Ninguna string visible sin traducir. Toda clave nueva se añade a `es` y a `ca` en el mismo commit. El idioma se puede forzar con `?lang=es` o `?lang=ca` en la URL.
 6. **Mobile-first.** El diseño se construye desde viewport móvil hacia arriba. Objetivos táctiles de al menos 44×44 px, `viewport` correcto, safe-areas y formularios usables con una mano.
-7. **Una rama por funcionalidad.** Cada funcionalidad nace de `main` en una rama `feat/descripcion-corta`, se implementa, se verifica y se integra en `main`. No se mezclan funcionalidades en una rama.
-8. **Conventional Commits en español**, imperativo y minúscula inicial: `feat:`, `fix:`, `docs:`, `refactor:`, etc. Máximo 72 caracteres en el asunto.
-9. **Nunca commitear** `.env`, `dist/`, `node_modules/`, tokens ni secretos.
-10. **La Definition of Done vive en `specs.md`** (sección "Definition of Done"). Es vinculante para cerrar cualquier rama.
+7. **Conventional Commits en español**, imperativo y minúscula inicial: `feat:`, `fix:`, `docs:`, `refactor:`, etc. Máximo 72 caracteres en el asunto.
+8. **Nunca commitear** `.env`, `dist/`, `node_modules/`, tokens ni secretos.
+9. **La Definition of Done vive en `specs.md`** (sección "Definition of Done"). Es vinculante para cerrar cualquier rama.
 
 ## Estructura del repositorio
 
@@ -94,8 +93,7 @@ docker compose run --rm app npm run deploy:dry-run
 ## Flujo de trabajo por funcionalidad
 
 1. `git switch main && git pull --ff-only` (si hay remoto).
-2. `git switch -c feat/descripcion-corta`.
-3. Implementar la funcionalidad completa (incluidas traducciones y estilos mobile-first).
-4. Ejecutar lint, tests y build dentro de Docker.
-5. Commit validado y merge a `main`.
-6. Actualizar `specs.md` si la funcionalidad cambia algún requisito.
+2. Implementar la funcionalidad completa (incluidas traducciones y estilos mobile-first).
+3. Ejecutar lint, tests y build dentro de Docker.
+4. Commit validado y merge a `main`.
+5. Actualizar `specs.md` si la funcionalidad cambia algún requisito.
