@@ -25,6 +25,8 @@ Un aparcamiento en la calle se puede registrar en **tres modos** de entrada, ele
 | `direccion` — solo dirección | calle + número (+ ciudad opcional) + pago | GPS, enlace a Maps |
 | `completo` | GPS + calle + número (+ ciudad opcional) + pago | — |
 
+- El modo preseleccionado al abrir el formulario es `direccion` ("Solo calle y número").
+
 - **Calle** y **número** son obligatorios cuando el modo incluye dirección; **ciudad** es opcional.
 - **Coordenadas GPS**: botón que solicita `navigator.geolocation` y guarda `lat`/`lng`. Debe mostrar estado de carga y errores (permiso denegado, no disponible, timeout). Obligatorias en los modos `gps` y `completo`.
 - **Enlace a Google Maps**: visible en el registro activo solo si hay GPS, abre `https://www.google.com/maps?q=<lat>,<lng>` en pestaña nueva.
@@ -145,7 +147,7 @@ La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
 ### Guardar en la calle
 
 1. Pantalla de entrada → "Calle".
-2. Elegir el modo: solo GPS, solo dirección o ambos.
+2. Elegir el modo: solo GPS, solo dirección (por defecto) o ambos.
 3. Según el modo: pulsar "Usar mi ubicación" (GPS) y/o rellenar calle, número y ciudad (opcional).
 4. Indicar si es de pago.
 5. Adjuntar foto (opcional).

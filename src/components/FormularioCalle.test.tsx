@@ -43,9 +43,23 @@ describe("FormularioCalle", () => {
     mockUbicacion();
   });
 
+  it("preselecciona el modo solo calle y número", () => {
+    renderFormulario();
+
+    expect(
+      screen.getByRole("radio", { name: /solo calle y número/i }),
+    ).toBeChecked();
+    expect(
+      screen.queryByRole("button", { name: /usar mi ubicación/i }),
+    ).not.toBeInTheDocument();
+  });
+
   it("guarda en modo completo con GPS y dirección", async () => {
     const { onGuardar, usuario } = renderFormulario();
 
+    await usuario.click(
+      screen.getByRole("radio", { name: /ubicación gps y dirección/i }),
+    );
     await usuario.type(screen.getByLabelText(/^calle/i), "Gran Via");
     await usuario.type(screen.getByLabelText(/^número/i), "10");
     await usuario.type(screen.getByLabelText(/ciudad/i), "Barcelona");
@@ -156,6 +170,9 @@ describe("FormularioCalle", () => {
     mockErrorUbicacion(1);
     const { usuario } = renderFormulario();
 
+    await usuario.click(
+      screen.getByRole("radio", { name: /solo ubicación gps/i }),
+    );
     await usuario.click(
       screen.getByRole("button", { name: /usar mi ubicación/i }),
     );
