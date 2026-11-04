@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import "../i18n";
@@ -31,6 +31,28 @@ describe("RegistroActivo", () => {
     expect(screen.getByText("-2")).toBeInTheDocument();
     expect(screen.getByText("A")).toBeInTheDocument();
     expect(screen.getByText("42")).toBeInTheDocument();
+  });
+
+  it("muestra el tiempo aparcado y lo actualiza sin refrescar", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2024, 4, 1, 12, 30));
+
+    try {
+      render(<RegistroActivo aparcamiento={parking} onRecoger={vi.fn()} />);
+
+      expect(screen.getByText(/lleva aparcado 2 h$/i)).toBeInTheDocument();
+
+      act(() => {
+        vi.setSystemTime(new Date(2024, 4, 1, 12, 45));
+        vi.advanceTimersByTime(1000);
+      });
+
+      expect(
+        screen.getByText(/lleva aparcado 2 h 15 min/i),
+      ).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("pide confirmación antes de recoger el coche", async () => {

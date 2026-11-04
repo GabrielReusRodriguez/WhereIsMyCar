@@ -44,6 +44,7 @@ Un aparcamiento en la calle se puede registrar en **tres modos** de entrada, ele
 
 - Si existe un registro, la app muestra directamente sus datos: tipo, hora, campos correspondientes, foto si la hay y, en calle, enlace a Google Maps.
 - La hora se muestra formateada según el locale activo (`es` o `ca`).
+- El **tiempo transcurrido** desde el aparcamiento se muestra junto a la hora y se actualiza en vivo (cada segundo) sin recargar la página, hasta el minuto con segundos y después con minutos, horas y días.
 
 ### RF-05 — Recoger el coche
 

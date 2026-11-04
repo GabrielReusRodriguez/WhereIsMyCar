@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { Aparcamiento, Direccion } from "../types/aparcamiento";
-import { formatearFecha } from "../utils/fecha";
+import { useAhora } from "../hooks/useAhora";
+import { formatearDuracion, formatearFecha } from "../utils/fecha";
 import { formatearCoordenadas, urlGoogleMaps } from "../utils/googleMaps";
 import { DialogoConfirmacion } from "./DialogoConfirmacion";
 import { FotoGuardada } from "./FotoGuardada";
@@ -20,6 +21,7 @@ function formatearDireccion(direccion: Direccion): string {
 export function RegistroActivo({ aparcamiento, onRecoger }: Props) {
   const { t, i18n } = useTranslation();
   const [confirmando, setConfirmando] = useState(false);
+  const ahora = useAhora();
   const idioma: Idioma = i18n.language === "ca" ? "ca" : "es";
 
   const confirmar = () => {
@@ -38,6 +40,11 @@ export function RegistroActivo({ aparcamiento, onRecoger }: Props) {
       <p className="registro__hora">
         {t("guardado.hora", {
           fecha: formatearFecha(aparcamiento.guardadoEn, idioma),
+        })}
+      </p>
+      <p className="registro__tiempo" role="timer">
+        {t("guardado.tiempoTranscurrido", {
+          tiempo: formatearDuracion(ahora - aparcamiento.guardadoEn, idioma),
         })}
       </p>
 
