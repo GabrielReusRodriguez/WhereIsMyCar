@@ -6,6 +6,7 @@ import type {
   EventoAparcamiento,
   NuevoAparcamiento,
   UbicacionGps,
+  UbicacionParking,
 } from "../types/aparcamiento";
 import {
   ALMACEN_APARCAMIENTOS,
@@ -53,9 +54,32 @@ function validarDireccion(valor: unknown): Direccion | null {
   };
 }
 
+function validarUbicacionParking(valor: unknown): UbicacionParking | null {
+  if (!esObjeto(valor) || typeof valor.modo !== "string") return null;
+
+  if (valor.modo === "gps") {
+    const gps = validarGps(valor.gps);
+    return gps === null ? null : { modo: "gps", gps };
+  }
+
+  if (valor.modo === "direccion") {
+    const direccion = validarDireccion(valor.direccion);
+    return direccion === null ? null : { modo: "direccion", direccion };
+  }
+
+  return null;
+}
+
 function validarParking(valor: Record<string, unknown>): AparcamientoParking | null {
   if (!esTextoNoVacio(valor.planta) || !esTextoNoVacio(valor.plaza)) return null;
   if (valor.zona !== undefined && typeof valor.zona !== "string") return null;
+
+  let ubicacion: UbicacionParking | undefined;
+  if (valor.ubicacion !== undefined) {
+    const valida = validarUbicacionParking(valor.ubicacion);
+    if (valida === null) return null;
+    ubicacion = valida;
+  }
 
   return {
     id: valor.id as string,
@@ -65,6 +89,7 @@ function validarParking(valor: Record<string, unknown>): AparcamientoParking | n
     planta: valor.planta,
     ...(esTextoNoVacio(valor.zona) ? { zona: valor.zona } : {}),
     plaza: valor.plaza,
+    ...(ubicacion === undefined ? {} : { ubicacion }),
   };
 }
 

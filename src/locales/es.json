@@ -21,7 +21,13 @@
     "zona": "Zona (opcional)",
     "zonaAyuda": "Por ejemplo: zona A, sector norte",
     "plaza": "Plaza",
-    "plazaAyuda": "Número o referencia de la plaza"
+    "plazaAyuda": "Número o referencia de la plaza",
+    "anadirUbicacion": "Añadir ubicación del parking (opcional)",
+    "quitarUbicacion": "Quitar ubicación",
+    "ubicacion": "Ubicación del parking",
+    "ubicacionModo": "¿Cómo quieres indicar la ubicación?",
+    "ubicacionModo_direccion": "Dirección (calle, número y ciudad)",
+    "ubicacionModo_gps": "Coordenadas GPS"
   },
   "calle": {
     "titulo": "Aparcamiento en la calle",

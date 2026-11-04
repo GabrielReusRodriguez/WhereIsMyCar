@@ -98,6 +98,63 @@ describe("validación del modelo", () => {
       }),
     ).toBeNull();
   });
+
+  it("acepta un parking con dirección opcional", () => {
+    const registro = validarAparcamiento({
+      ...parking,
+      id: "x",
+      guardadoEn: 1,
+      ubicacion: {
+        modo: "direccion",
+        direccion: { calle: "Gran Via", numero: "10", ciudad: "Barcelona" },
+      },
+    });
+
+    expect(registro).toMatchObject({
+      tipo: "parking",
+      ubicacion: {
+        modo: "direccion",
+        direccion: { calle: "Gran Via", numero: "10", ciudad: "Barcelona" },
+      },
+    });
+  });
+
+  it("acepta un parking con GPS opcional", () => {
+    const registro = validarAparcamiento({
+      ...parking,
+      id: "x",
+      guardadoEn: 1,
+      ubicacion: { modo: "gps", gps: { lat: 41.3874, lng: 2.1686 } },
+    });
+
+    expect(registro).toMatchObject({
+      tipo: "parking",
+      ubicacion: { modo: "gps", gps: { lat: 41.3874, lng: 2.1686 } },
+    });
+  });
+
+  it("rechaza un parking con ubicación inválida", () => {
+    expect(
+      validarAparcamiento({
+        ...parking,
+        id: "x",
+        guardadoEn: 1,
+        ubicacion: { modo: "gps", gps: { lat: "no", lng: 2.1686 } },
+      }),
+    ).toBeNull();
+
+    expect(
+      validarAparcamiento({
+        ...parking,
+        id: "x",
+        guardadoEn: 1,
+        ubicacion: {
+          modo: "direccion",
+          direccion: { calle: "Gran Via", numero: "  " },
+        },
+      }),
+    ).toBeNull();
+  });
 });
 
 describe("almacenamiento inmutable", () => {

@@ -72,6 +72,77 @@ test.describe("aparcamiento en parking", () => {
   });
 });
 
+test.describe("aparcamiento en parking con ubicación opcional", () => {
+  test.use({
+    geolocation: { latitude: 41.3874, longitude: 2.1686 },
+    permissions: ["geolocation"],
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await empezarLimpio(page);
+  });
+
+  test("oculta la ubicación y guarda la dirección si se indica", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: "Parking" }).click();
+
+    await expect(
+      page.getByRole("button", { name: /añadir ubicación/i }),
+    ).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Calle" })).toHaveCount(0);
+
+    await page.getByRole("button", { name: /añadir ubicación/i }).click();
+    await page
+      .getByRole("radio", { name: "Dirección (calle, número y ciudad)" })
+      .check();
+    await page.getByRole("textbox", { name: "Calle" }).fill("Gran Via");
+    await page.getByRole("textbox", { name: "Número" }).fill("10");
+    await page.getByRole("textbox", { name: "Ciudad" }).fill("Barcelona");
+    await page.getByLabel("Planta").fill("-2");
+    await page.getByLabel("Plaza").fill("42");
+    await page.getByRole("button", { name: "Guardar aparcamiento" }).click();
+
+    await expect(page.getByText("Aparcamiento guardado")).toBeVisible();
+    await expect(page.getByText("Gran Via 10, Barcelona")).toBeVisible();
+  });
+
+  test("guarda las coordenadas GPS del parking", async ({ page }) => {
+    await page.getByRole("button", { name: "Parking" }).click();
+    await page.getByRole("button", { name: /añadir ubicación/i }).click();
+    await page.getByRole("radio", { name: "Coordenadas GPS" }).check();
+    await page.getByRole("button", { name: "Usar mi ubicación" }).click();
+
+    await expect(page.getByText("Ubicación obtenida")).toBeVisible();
+
+    await page.getByLabel("Planta").fill("-2");
+    await page.getByLabel("Plaza").fill("42");
+    await page.getByRole("button", { name: "Guardar aparcamiento" }).click();
+
+    await expect(page.getByText("Aparcamiento guardado")).toBeVisible();
+    await expect(page.getByText("41.38740, 2.16860")).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Abrir en Google Maps" }),
+    ).toHaveAttribute(
+      "href",
+      "https://www.google.com/maps?q=41.3874,2.1686",
+    );
+  });
+
+  test("exige ubicación si la sección está desplegada", async ({ page }) => {
+    await page.getByRole("button", { name: "Parking" }).click();
+    await page.getByLabel("Planta").fill("-2");
+    await page.getByLabel("Plaza").fill("42");
+    await page.getByRole("button", { name: /añadir ubicación/i }).click();
+    await page.getByRole("button", { name: "Guardar aparcamiento" }).click();
+
+    await expect(
+      page.getByText("Rellena los campos obligatorios."),
+    ).toBeVisible();
+    await expect(page.getByText("Aparcamiento guardado")).toHaveCount(0);
+  });
+});
+
 test.describe("aparcamiento en la calle", () => {
   test.use({
     geolocation: { latitude: 41.3874, longitude: 2.1686 },

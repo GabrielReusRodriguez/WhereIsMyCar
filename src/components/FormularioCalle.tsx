@@ -1,13 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { NuevoAparcamiento } from "../types/aparcamiento";
-import {
-  ErrorUbicacion,
-  obtenerUbicacion,
-  type CodigoErrorUbicacion,
-} from "../utils/geolocalizacion";
-import { formatearCoordenadas, urlGoogleMaps } from "../utils/googleMaps";
+import { useUbicacionGps } from "../hooks/useUbicacionGps";
 import { CampoTexto } from "./CampoTexto";
+import { CampoUbicacionGps } from "./CampoUbicacionGps";
 import { FotoCoche, type FotoSeleccionada } from "./FotoCoche";
 
 type Props = {
@@ -19,19 +15,6 @@ type ModoCalle = "gps" | "direccion" | "completo";
 
 const MODOS: readonly ModoCalle[] = ["gps", "direccion", "completo"];
 
-type EstadoUbicacion =
-  | { estado: "inicial" }
-  | { estado: "cargando" }
-  | { estado: "ok"; lat: number; lng: number }
-  | { estado: "error"; codigo: CodigoErrorUbicacion };
-
-const CLAVES_ERROR: Record<CodigoErrorUbicacion, string> = {
-  "permiso-denegado": "errores.ubicacionPermiso",
-  "no-disponible": "errores.ubicacionNoDisponible",
-  timeout: "errores.ubicacionTimeout",
-  "no-soportado": "errores.ubicacionNoSoportado",
-};
-
 export function FormularioCalle({ onGuardar, onCancelar }: Props) {
   const { t } = useTranslation();
   const [modo, setModo] = useState<ModoCalle>("direccion");
@@ -40,27 +23,13 @@ export function FormularioCalle({ onGuardar, onCancelar }: Props) {
   const [ciudad, setCiudad] = useState("");
   const [dePago, setDePago] = useState(false);
   const [foto, setFoto] = useState<FotoSeleccionada | null>(null);
-  const [ubicacion, setUbicacion] = useState<EstadoUbicacion>({
-    estado: "inicial",
-  });
+  const { ubicacion, solicitar } = useUbicacionGps();
   const [conError, setConError] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [errorGuardado, setErrorGuardado] = useState(false);
 
   const pideGps = modo === "gps" || modo === "completo";
   const pideDireccion = modo === "direccion" || modo === "completo";
-
-  const pedirUbicacion = async () => {
-    setUbicacion({ estado: "cargando" });
-    try {
-      const { lat, lng } = await obtenerUbicacion();
-      setUbicacion({ estado: "ok", lat, lng });
-    } catch (error) {
-      const codigo =
-        error instanceof ErrorUbicacion ? error.codigo : "no-disponible";
-      setUbicacion({ estado: "error", codigo });
-    }
-  };
 
   const enviar = async (evento: FormEvent<HTMLFormElement>) => {
     evento.preventDefault();
@@ -186,49 +155,12 @@ export function FormularioCalle({ onGuardar, onCancelar }: Props) {
       )}
 
       {pideGps && (
-        <fieldset className="ubicacion">
-          <legend className="ubicacion__leyenda">{t("calle.ubicacion")}</legend>
-
-          <button
-            type="button"
-            className="boton boton--secundario"
-            onClick={pedirUbicacion}
-            disabled={ubicacion.estado === "cargando" || guardando}
-          >
-            {ubicacion.estado === "cargando"
-              ? t("calle.obteniendoUbicacion")
-              : t("calle.usarUbicacion")}
-          </button>
-
-          {ubicacion.estado === "ok" && (
-            <div className="ubicacion__resultado">
-              <p className="ubicacion__ok">{t("calle.ubicacionObtenida")}</p>
-              <p className="ubicacion__coordenadas">
-                {formatearCoordenadas(ubicacion.lat, ubicacion.lng)}
-              </p>
-              <a
-                className="enlace"
-                href={urlGoogleMaps(ubicacion.lat, ubicacion.lng)}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {t("calle.verEnMaps")}
-              </a>
-            </div>
-          )}
-
-          {ubicacion.estado === "error" && (
-            <p className="error" role="alert">
-              {t(CLAVES_ERROR[ubicacion.codigo])}
-            </p>
-          )}
-
-          {conError && ubicacion.estado !== "ok" && (
-            <p className="error" role="status">
-              {t("errores.ubicacionObligatoria")}
-            </p>
-          )}
-        </fieldset>
+        <CampoUbicacionGps
+          ubicacion={ubicacion}
+          onSolicitar={solicitar}
+          deshabilitado={guardando}
+          mostrarErrorObligatorio={conError}
+        />
       )}
 
       <fieldset className="pago">
