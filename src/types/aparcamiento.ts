@@ -13,6 +13,11 @@ export type Direccion = {
   ciudad?: string;
 };
 
+/** Ubicación opcional de un aparcamiento público: dirección o GPS. */
+export type UbicacionParking =
+  | { modo: "direccion"; direccion: Direccion }
+  | { modo: "gps"; gps: UbicacionGps };
+
 type AparcamientoBase = {
   /** Identificador único e inmutable del registro. */
   id: string;
@@ -27,6 +32,8 @@ export type AparcamientoParking = AparcamientoBase & {
   planta: string;
   zona?: string;
   plaza: string;
+  /** Dirección o coordenadas del parking, si el usuario las indica. */
+  ubicacion?: UbicacionParking;
 };
 
 type AparcamientoCalleBase = AparcamientoBase & {

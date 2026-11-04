@@ -21,7 +21,13 @@
     "zona": "Zona (opcional)",
     "zonaAyuda": "Per exemple: zona A, sector nord",
     "plaza": "Plaça",
-    "plazaAyuda": "Número o referència de la plaça"
+    "plazaAyuda": "Número o referència de la plaça",
+    "anadirUbicacion": "Afegeix la ubicació del pàrquing (opcional)",
+    "quitarUbicacion": "Treu la ubicació",
+    "ubicacion": "Ubicació del pàrquing",
+    "ubicacionModo": "Com vols indicar la ubicació?",
+    "ubicacionModo_direccion": "Adreça (carrer, número i ciutat)",
+    "ubicacionModo_gps": "Coordenades GPS"
   },
   "calle": {
     "titulo": "Aparcament al carrer",

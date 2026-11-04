@@ -4,7 +4,7 @@ Especificación funcional y técnica de la web app **WhereIsMyCar**: registrar d
 
 ## 1. Visión
 
-El usuario aparca el coche, abre la app, registra la ubicación (parking o calle), opcionalmente hace una foto del coche y guarda. Mientras el coche sigue aparcado, la app muestra el registro activo con un enlace a Google Maps si es calle. Al recoger el coche, pulsa "He recogido el coche" y se registra un evento de recogida; el registro y la foto se conservan.
+El usuario aparca el coche, abre la app, registra la ubicación (parking o calle), opcionalmente hace una foto del coche y guarda. Mientras el coche sigue aparcado, la app muestra el registro activo con un enlace a Google Maps si hay coordenadas. Al recoger el coche, pulsa "He recogido el coche" y se registra un evento de recogida; el registro y la foto se conservan.
 
 ## 2. Requisitos funcionales
 
@@ -12,6 +12,8 @@ El usuario aparca el coche, abre la app, registra la ubicación (parking o calle
 
 - Campos obligatorios: **planta** y **plaza**.
 - Campo opcional: **zona**.
+- **Ubicación opcional y oculta por defecto**: un enlace "Añadir ubicación del parking (opcional)" despliega la sección. Dentro se elige **o bien** dirección postal (calle + número obligatorios, ciudad opcional) **o bien** coordenadas GPS (`navigator.geolocation`), nunca ambas.
+- Si la sección está desplegada al guardar, el dato elegido es obligatorio. Un enlace "Quitar ubicación" vuelve a ocultarla y el registro se guarda sin ubicación.
 - La **hora de aparcamiento** es la del momento de guardar el registro (automática, no editable).
 - Requiere una pantalla de entrada con selector de tipo: "Parking" o "Calle".
 
@@ -42,7 +44,7 @@ Un aparcamiento en la calle se puede registrar en **tres modos** de entrada, ele
 
 ### RF-04 — Vista del aparcamiento activo
 
-- Si existe un registro, la app muestra directamente sus datos: tipo, hora, campos correspondientes, foto si la hay y, en calle, enlace a Google Maps.
+- Si existe un registro, la app muestra directamente sus datos: tipo, hora, campos correspondientes, foto si la hay y, en su caso, la ubicación indicada (dirección o coordenadas) y el enlace a Google Maps cuando hay GPS.
 - La hora se muestra formateada según el locale activo (`es` o `ca`).
 - El **tiempo transcurrido** desde el aparcamiento se muestra junto a la hora y se actualiza en vivo (cada segundo) sin recargar la página, hasta el minuto con segundos y después con minutos, horas y días.
 
@@ -85,6 +87,10 @@ Los registros viven en **IndexedDB** (base `whereismycar`, versión 2) y son **i
 type UbicacionGps = { lat: number; lng: number };
 type Direccion = { calle: string; numero: string; ciudad?: string };
 
+type UbicacionParking =
+  | { modo: "direccion"; direccion: Direccion }
+  | { modo: "gps"; gps: UbicacionGps };
+
 type AparcamientoBase = {
   id: string;                  // crypto.randomUUID(), único e inmutable
   guardadoEn: number;          // epoch ms, hora de aparcamiento
@@ -96,6 +102,7 @@ type AparcamientoParking = AparcamientoBase & {
   planta: string;
   zona?: string;
   plaza: string;
+  ubicacion?: UbicacionParking; // dirección o GPS opcional del parking
 };
 
 type AparcamientoCalle = AparcamientoBase & {
@@ -141,9 +148,10 @@ La preferencia de idioma se guarda en `localStorage` bajo `whereismycar.idioma`.
 
 1. Pantalla de entrada → "Parking".
 2. Rellenar planta, zona (opcional) y plaza.
-3. Adjuntar foto (opcional).
-4. Guardar → se persiste el registro con `guardadoEn = Date.now()`.
-5. Se muestra la vista del aparcamiento activo.
+3. Opcionalmente, pulsar "Añadir ubicación del parking" y elegir dirección (calle, número y ciudad opcional) o coordenadas GPS.
+4. Adjuntar foto (opcional).
+5. Guardar → se persiste el registro con `guardadoEn = Date.now()`.
+6. Se muestra la vista del aparcamiento activo.
 
 ### Guardar en la calle
 

@@ -53,22 +53,55 @@ export function RegistroActivo({ aparcamiento, onRecoger }: Props) {
       )}
 
       {aparcamiento.tipo === "parking" && (
-        <dl className="registro__datos">
-          <div className="registro__dato">
-            <dt>{t("parking.planta")}</dt>
-            <dd>{aparcamiento.planta}</dd>
-          </div>
-          {aparcamiento.zona !== undefined && (
+        <>
+          <dl className="registro__datos">
             <div className="registro__dato">
-              <dt>{t("parking.zona")}</dt>
-              <dd>{aparcamiento.zona}</dd>
+              <dt>{t("parking.planta")}</dt>
+              <dd>{aparcamiento.planta}</dd>
             </div>
+            {aparcamiento.zona !== undefined && (
+              <div className="registro__dato">
+                <dt>{t("parking.zona")}</dt>
+                <dd>{aparcamiento.zona}</dd>
+              </div>
+            )}
+            <div className="registro__dato">
+              <dt>{t("parking.plaza")}</dt>
+              <dd>{aparcamiento.plaza}</dd>
+            </div>
+            {aparcamiento.ubicacion?.modo === "direccion" && (
+              <div className="registro__dato registro__dato--ancho">
+                <dt>{t("guardado.direccion")}</dt>
+                <dd>{formatearDireccion(aparcamiento.ubicacion.direccion)}</dd>
+              </div>
+            )}
+            {aparcamiento.ubicacion?.modo === "gps" && (
+              <div className="registro__dato registro__dato--ancho">
+                <dt>{t("guardado.coordenadas")}</dt>
+                <dd>
+                  {formatearCoordenadas(
+                    aparcamiento.ubicacion.gps.lat,
+                    aparcamiento.ubicacion.gps.lng,
+                  )}
+                </dd>
+              </div>
+            )}
+          </dl>
+
+          {aparcamiento.ubicacion?.modo === "gps" && (
+            <a
+              className="boton boton--secundario"
+              href={urlGoogleMaps(
+                aparcamiento.ubicacion.gps.lat,
+                aparcamiento.ubicacion.gps.lng,
+              )}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t("guardado.verEnMaps")}
+            </a>
           )}
-          <div className="registro__dato">
-            <dt>{t("parking.plaza")}</dt>
-            <dd>{aparcamiento.plaza}</dd>
-          </div>
-        </dl>
+        </>
       )}
 
       {aparcamiento.tipo === "calle" && (

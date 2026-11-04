@@ -460,6 +460,46 @@ button:disabled {
   font-weight: 600;
 }
 
+.enlace--boton {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.enlace--boton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ubicacion-parking {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--color-superficie-alta);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+}
+
+.ubicacion-parking__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ubicacion-parking__titulo {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 .pago {
   display: flex;
   flex-direction: column;

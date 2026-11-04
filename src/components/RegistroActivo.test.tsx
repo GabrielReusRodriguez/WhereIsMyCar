@@ -33,6 +33,38 @@ describe("RegistroActivo", () => {
     expect(screen.getByText("42")).toBeInTheDocument();
   });
 
+  it("muestra la dirección del parking si existe", () => {
+    const conDireccion: AparcamientoParking = {
+      ...parking,
+      ubicacion: {
+        modo: "direccion",
+        direccion: { calle: "Gran Via", numero: "10", ciudad: "Barcelona" },
+      },
+    };
+
+    render(<RegistroActivo aparcamiento={conDireccion} onRecoger={vi.fn()} />);
+
+    expect(screen.getByText("Gran Via 10, Barcelona")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: /google maps/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("muestra las coordenadas y el enlace del parking si hay GPS", () => {
+    const conGps: AparcamientoParking = {
+      ...parking,
+      ubicacion: { modo: "gps", gps: { lat: 41.3874, lng: 2.1686 } },
+    };
+
+    render(<RegistroActivo aparcamiento={conGps} onRecoger={vi.fn()} />);
+
+    expect(screen.getByText("41.38740, 2.16860")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /google maps/i })).toHaveAttribute(
+      "href",
+      "https://www.google.com/maps?q=41.3874,2.1686",
+    );
+  });
+
   it("muestra el tiempo aparcado y lo actualiza sin refrescar", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2024, 4, 1, 12, 30));
