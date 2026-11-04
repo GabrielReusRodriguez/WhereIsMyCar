@@ -331,6 +331,12 @@ button:disabled {
   color: var(--color-texto-suave);
 }
 
+.registro__tiempo {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+
 .registro__datos {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));

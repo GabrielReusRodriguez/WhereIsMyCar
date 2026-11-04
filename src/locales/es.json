@@ -72,6 +72,7 @@
     "tipoParking": "Parking",
     "tipoCalle": "Calle",
     "hora": "Aparcado el {{fecha}}",
+    "tiempoTranscurrido": "Lleva aparcado {{tiempo}}",
     "direccion": "Dirección",
     "pago": "Pago",
     "pagoSi": "Sí",

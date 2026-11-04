@@ -51,6 +51,17 @@ test.describe("aparcamiento en parking", () => {
     await expect(page.getByText("Aparcamiento guardado")).toHaveCount(0);
   });
 
+  test("muestra el tiempo aparcado y avanza sin recargar", async ({ page }) => {
+    await page.getByRole("button", { name: "Parking" }).click();
+    await page.getByLabel("Planta").fill("-2");
+    await page.getByLabel("Plaza").fill("42");
+    await page.getByRole("button", { name: "Guardar aparcamiento" }).click();
+
+    const contador = page.getByRole("timer");
+    await expect(contador).toContainText("Lleva aparcado");
+    await expect(contador).toHaveText(/Lleva aparcado [1-9]\d* s/);
+  });
+
   test("valida los campos obligatorios", async ({ page }) => {
     await page.getByRole("button", { name: "Parking" }).click();
     await page.getByRole("button", { name: "Guardar aparcamiento" }).click();
